@@ -1,7 +1,7 @@
 {
-  "name": "kmz_site",
-  "version": "0.1.0",
-  "private": true,
+  "name": "khriztianmoreno-web-site",
+  "version": "1.1.0",
+  "private": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,9 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "11.1.2",
+    "@glidejs/glide": "3.4.1",
+    "@redq/reuse-modal": "1.2.4",
+    "@styled-system/theme-get": "5.1.2",
+    "matter-js": "0.17.1",
+    "next": "12.0.3",
+    "prop-types": "15.7.2",
+    "rc-drawer": "4.4.2",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-anchor-link-smooth-scroll": "1.0.12",
+    "react-dom": "17.0.2",
+    "react-icons-kit": "2.0.0",
+    "react-scrollspy": "3.4.3",
+    "react-stickynode": "4.0.0",
+    "styled-components": "5.3.3",
+    "styled-system": "5.1.5",
+    "swiper": "7.2.0"
   },
   "devDependencies": {
     "eslint": "8.1.0",
