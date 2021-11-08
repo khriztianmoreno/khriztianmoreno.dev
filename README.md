@@ -1,4 +1,4 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/a5faf450-7640-4748-bb13-b4485b787b29/deploy-status)](https://app.netlify.com/sites/khriztianmoreno-dev/deploys)
+
 
 # khriztianmoreno web site
 
@@ -29,4 +29,4 @@ For detailed explanation on how things work, checkout the [Next.js docs](https:/
 
 ## 💫 Deploy
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/khriztianmoreno/khriztianmoreno.dev)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fkhriztianmoreno%2Fkhriztianmoreno.dev)
