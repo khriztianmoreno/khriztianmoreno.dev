@@ -2,6 +2,7 @@ import { socialTwitter } from 'react-icons-kit/ionicons/socialTwitter';
 import { socialFacebook } from 'react-icons-kit/ionicons/socialFacebook';
 import { socialYoutube } from 'react-icons-kit/ionicons/socialYoutube';
 import { socialGithub } from 'react-icons-kit/ionicons/socialGithub';
+import { socialLinkedin } from 'react-icons-kit/ionicons/socialLinkedin';
 import { socialInstagramOutline } from 'react-icons-kit/ionicons/socialInstagramOutline';
 
 import AwardMVP from '../image/portfolio/mvp.jpeg';
@@ -34,24 +35,28 @@ import Reviewer3 from '../image/portfolio/client-avatar-3.jpg';
 
 export const SOCIAL_PROFILES = [
   {
-    icon: socialTwitter,
-    url: 'https://twitter.com/khriztianmoreno',
-  },
-  {
-    icon: socialFacebook,
-    url: 'https://www.facebook.com/khriztianmoreno',
-  },
-  {
-    icon: socialYoutube,
-    url: 'https://www.youtube.com/khriztianmoreno',
+    icon: socialLinkedin,
+    url: 'https://www.linkedin.com/in/khriztianmoreno/',
   },
   {
     icon: socialGithub,
     url: 'https://github.com/khriztianmoreno',
   },
   {
+    icon: socialTwitter,
+    url: 'https://twitter.com/khriztianmoreno',
+  },
+  {
+    icon: socialYoutube,
+    url: 'https://www.youtube.com/khriztianmoreno',
+  },
+  {
     icon: socialInstagramOutline,
     url: 'https://www.instagram.com/khriztianmoreno',
+  },
+  {
+    icon: socialFacebook,
+    url: 'https://www.facebook.com/khriztianmoreno',
   },
 ];
 
@@ -66,11 +71,6 @@ export const MENU_ITEMS = [
     path: '#me_bio',
     offset: '70',
   },
-  // {
-  //   label: 'PROJECT',
-  //   path: '#portfolio_section',
-  //   offset: '0',
-  // },
   {
     label: 'AWARDS',
     path: '#awards_section',
@@ -557,14 +557,17 @@ export const TESTIMONIAL = [
 
 export const FOOTER_MENU = [
   {
+    id: 1,
     label: 'Contact',
     path: '#',
   },
   {
+    id: 2,
     label: 'Privacy',
     path: '#',
   },
   {
+    id: 3,
     label: 'Cookie Policy',
     path: '#',
   },

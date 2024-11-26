@@ -60,6 +60,15 @@ const ScrollSpyMenu = ({ className, menuItems, drawerClose, ...props }) => {
           )}
         </li>
       ))}
+      <li>
+        <a
+          href="https://blog.khriztianmoreno.dev/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          BLOG
+        </a>
+      </li>
     </Scrollspy>
   );
 };
