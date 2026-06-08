@@ -34,7 +34,7 @@ const Bio = () => (
 
         <figure className="bio-illustration m-0">
           <img
-            src="https://res.cloudinary.com/khriztianmoreno/image/upload/v1623012362/km_site/profileme.jpg"
+            src="https://res.cloudinary.com/khriztianmoreno/image/upload/v1780958451/IMG_5004.png"
             alt="Khriztianmoreno illustration"
             className="block max-w-full h-auto"
           />
