@@ -9,53 +9,20 @@ On a daily basis he uses: JavaScript (ES6), React, Gatsby, CSS (inJS), GraphQL, 
 Helps others learn by doing through articles, videos, and courses about JavaScript, React, and the static web.`;
 
 const Bio = () => (
-  <section id="me_bio" style={{ backgroundColor: '#00F6BB', padding: '80px 0' }}>
-    <Container noGutter mobileGutter width="1200px">
-      <div style={{ margin: '0 auto 60px', maxWidth: 545, textAlign: 'center' }}>
-        <h2
-          style={{
-            color: '#4B15C1',
-            fontWeight: 700,
-            fontSize: 48,
-            lineHeight: 1.3,
-            letterSpacing: '-1px',
-          }}
-        >
+  <section id="me_bio" className="bg-green py-20">
+    <Container noGutter mobileGutter fullWidth>
+      <div className="mx-auto mb-15 max-w-136 text-center">
+        <h2 className="text-purple text-5xl font-bold leading-tight tracking-tight">
           Meet Khriztianmoreno!
         </h2>
       </div>
 
-      <div
-        style={{
-          backgroundColor: '#ffffff',
-          borderRadius: 5,
-          display: 'flex',
-          alignItems: 'center',
-        }}
-        className="bio-content-wrapper"
-      >
+      <div className="bio-content-wrapper flex items-center rounded-sm bg-white">
         <div className="bio-text-content">
-          <h2
-            style={{
-              fontSize: 40,
-              fontWeight: 700,
-              lineHeight: 1.3,
-              letterSpacing: '-0.02em',
-              color: '#302b4e',
-              marginBottom: 20,
-            }}
-          >
+          <h2 className="text-heading mb-5 text-4xl font-bold leading-tight tracking-tight">
             He&apos;s Javascript Developer
           </h2>
-          <p
-            style={{
-              color: '#43414e',
-              fontSize: 16,
-              lineHeight: 2,
-              marginBottom: 27,
-              whiteSpace: 'pre-line',
-            }}
-          >
+          <p className="text-text mb-7 text-base leading-loose whitespace-pre-line">
             {about}
           </p>
           <SocialProfile
@@ -65,11 +32,11 @@ const Bio = () => (
           />
         </div>
 
-        <figure className="bio-illustration" style={{ margin: 0 }}>
+        <figure className="bio-illustration m-0">
           <img
             src="https://res.cloudinary.com/khriztianmoreno/image/upload/v1623012362/km_site/profileme.jpg"
             alt="Khriztianmoreno illustration"
-            style={{ display: 'block', maxWidth: '100%', height: 'auto' }}
+            className="block max-w-full h-auto"
           />
         </figure>
       </div>

@@ -12,103 +12,40 @@ const Subscription = () => {
   };
 
   return (
-    <section
-      style={{ position: 'relative', zIndex: 0 }}
-      className="subscription-section"
-    >
+    <section className="subscription-section relative z-0">
       <Container>
-        <div
-          style={{
-            backgroundColor: '#4B15C1',
-            borderRadius: 10,
-            paddingTop: 70,
-            paddingBottom: 90,
-          }}
-          className="subscription-content"
-        >
-          <div
-            style={{
-              margin: '0 auto',
-              maxWidth: 584,
-              textAlign: 'center',
-            }}
-          >
-            <h2
-              style={{
-                color: '#ffffff',
-                fontWeight: 700,
-                fontSize: 48,
-                lineHeight: 1.21,
-                letterSpacing: '-0.02em',
-                marginBottom: 50,
-              }}
-              className="subscription-heading"
-            >
+        <div className="subscription-content bg-purple rounded-lg pt-18 pb-22">
+          <div className="mx-auto max-w-146 text-center">
+            <h2 className="subscription-heading mb-12 text-white text-5xl font-bold leading-tight tracking-tight">
               Get booped on the brain.
             </h2>
-            <p
-              style={{
-                color: '#ffffff',
-                fontSize: 18,
-                lineHeight: 1.21,
-                letterSpacing: '-0.02em',
-                marginBottom: 50,
-              }}
-            >
+            <p className="mb-12 text-white text-lg leading-tight tracking-tight">
               Khriztianmoreno believes in lifelong learning and continuous improvement.
               In his newsletter, he shares his experience — both technical and otherwise —
               in hopes of connecting with more lifelong learners and building a community of practice.
             </p>
 
-            <form
-              onSubmit={handleSubmit}
-              style={{ display: 'flex' }}
-              className="subscription-form"
-            >
+            <form onSubmit={handleSubmit} className="subscription-form flex">
               <Input
                 inputType="email"
-                className="input-field"
+                className="input-field [&_input]:rounded-l-lg [&_input]:rounded-r-none [&_input]:min-h-18 [&_input]:min-w-84 [&_input]:pl-7.5"
                 placeholder="Type your e-mail"
-                style={{ borderRadius: '10px 0 0 10px', minHeight: 70, minWidth: 335, paddingLeft: 30 }}
               />
               <Button
                 type="submit"
                 title="Join"
                 icon={<ArrowRight size={18} />}
-                style={{
-                  background: '#DD4A28',
-                  borderRadius: '0px 10px 10px 0px',
-                  fontWeight: 700,
-                  padding: '0 30px',
-                  width: '100%',
-                }}
+                className="rounded-l-none! rounded-r-lg! font-bold px-7.5! w-full"
               />
             </form>
 
-            <ul
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                margin: '40px 0 0',
-                listStyle: 'none',
-                padding: 0,
-              }}
-              className="subscription-features"
-            >
+            <ul className="subscription-features flex justify-center mt-10 list-none p-0">
               {['30 days money back', 'Cancel anytime', 'Support & help'].map((text) => (
                 <li
                   key={text}
-                  style={{
-                    fontWeight: 500,
-                    fontSize: 15,
-                    lineHeight: 1.29,
-                    color: '#ffffff',
-                    marginRight: 18,
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
+                  className="flex items-center mr-4.5 text-sm font-medium leading-tight text-white"
                 >
-                  <Check size={20} style={{ marginRight: 8 }} />
+                  <Check size={20} className="mr-2" />
                   {text}
                 </li>
               ))}
@@ -119,7 +56,7 @@ const Subscription = () => {
 
       <style>{`
         .subscription-section::before {
-          background-color: #f1f5f8;
+          background-color: var(--color-surface-muted);
           content: '';
           position: absolute;
           left: 0; bottom: 0;

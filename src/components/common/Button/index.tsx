@@ -9,9 +9,7 @@ interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>
   iconPosition?: 'left' | 'right';
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   isLoading?: boolean;
-  loaderColor?: string;
   className?: string;
-  style?: React.CSSProperties;
 }
 
 const Button = ({
@@ -22,15 +20,13 @@ const Button = ({
   iconPosition = 'right',
   onClick,
   isLoading = false,
-  loaderColor,
   className = '',
-  style,
   ...props
 }: ButtonProps) => {
   const classes = ['reusecore__button', className].filter(Boolean).join(' ');
 
   const buttonIcon = isLoading ? (
-    <Loader loaderColor={loaderColor || '#30C56D'} />
+    <Loader />
   ) : (
     icon && <span className="btn-icon">{icon}</span>
   );
@@ -41,7 +37,6 @@ const Button = ({
       className={classes}
       disabled={disabled}
       onClick={onClick}
-      style={style}
       {...props}
     >
       {iconPosition === 'left' && buttonIcon}

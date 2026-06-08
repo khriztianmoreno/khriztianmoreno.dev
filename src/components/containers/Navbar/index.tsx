@@ -16,8 +16,8 @@ const Navbar = () => {
 
   return (
     <NavbarWrapper className="portfolio_navbar">
-      <Container noGutter mobileGutter width="1200px">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+      <Container noGutter mobileGutter fullWidth>
+        <div className="flex items-center justify-between w-full">
           <Logo
             href="#"
             logoSrc={LogoImage?.src}
@@ -31,13 +31,13 @@ const Navbar = () => {
             className="logo-alt"
           />
 
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div className="flex items-center">
             <ScrollSpyMenu className="main_menu" menuItems={MENU_ITEMS} />
             <div className="hamburger-btn">
               <Drawer
                 open={drawerOpen}
                 onOpenChange={setDrawerOpen}
-                drawerHandler={<HamburgMenu barColor="#00F6BB" />}
+                drawerHandler={<HamburgMenu className="text-green" />}
               >
                 <ScrollSpyMenu
                   className="mobile_menu"

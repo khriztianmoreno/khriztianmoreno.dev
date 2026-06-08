@@ -1,13 +1,9 @@
 interface LoaderProps {
-  loaderColor?: string;
   className?: string;
 }
 
-const Loader = ({ loaderColor = '#30C56D', className = '' }: LoaderProps) => (
-  <span
-    className={`reusecore__loader ${className}`}
-    style={{ color: loaderColor }}
-  />
+const Loader = ({ className = '' }: LoaderProps) => (
+  <span className={`reusecore__loader text-success ${className}`} />
 );
 
 export default Loader;

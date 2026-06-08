@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { useSfx } from '../../common/hooks/useSfx';
 import { usePool } from '../../common/hooks/usePoolFace';
@@ -82,10 +82,23 @@ function Hero() {
   const { playBoop } = useSfx();
   const [taglineIndex, setTaglineIndex] = useState(0);
   const tagline = taglines[taglineIndex];
+  const taglineRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     addPool();
   }, []);
+
+  // Tagline rotation/scale/size come from runtime data, so they are exposed
+  // as CSS variables through `setProperty` to avoid inline `style` props.
+  useEffect(() => {
+    const el = taglineRef.current;
+    if (!el) return;
+    el.style.setProperty('--top', tagline?.top ?? '-7px');
+    el.style.setProperty('--rotation', tagline?.rotation ?? '0deg');
+    el.style.setProperty('--scale', String(tagline?.scale ?? 1.1));
+    el.style.setProperty('--size', tagline?.size ?? '8.1vw');
+    el.style.setProperty('--size-lg', tagline?.['size-lg'] ?? '44px');
+  }, [tagline]);
 
   function cycleTagline() {
     addPool();
@@ -100,16 +113,8 @@ function Hero() {
       <h1 className="hero">
         <Badge />
         <span
+          ref={taglineRef}
           className="hero-tagline"
-          style={
-            {
-              '--top': tagline?.top ?? '-7px',
-              '--rotation': tagline?.rotation ?? '0deg',
-              '--scale': tagline?.scale ?? 1.1,
-              '--size': tagline?.size ?? '8.1vw',
-              '--size-lg': tagline?.['size-lg'] ?? '44px',
-            } as React.CSSProperties
-          }
           dangerouslySetInnerHTML={{ __html: tagline?.text ?? '' }}
         />
       </h1>

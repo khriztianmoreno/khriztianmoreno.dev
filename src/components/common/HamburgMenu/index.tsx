@@ -2,16 +2,18 @@ import React from 'react';
 
 interface HamburgMenuProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
-  barColor?: string;
 }
 
-const HamburgMenu = ({ className = '', barColor = '#10ac84', ...props }: HamburgMenuProps) => {
-  const classes = ['hamburgMenu__bar', className].filter(Boolean).join(' ');
+const HamburgMenu = ({ className = '', ...props }: HamburgMenuProps) => {
+  const classes = ['hamburgMenu__bar', 'text-teal', className]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <button className={classes} aria-label="Open menu" {...props}>
-      <span style={{ backgroundColor: barColor }} />
-      <span style={{ backgroundColor: barColor }} />
-      <span style={{ backgroundColor: barColor }} />
+      <span />
+      <span />
+      <span />
     </button>
   );
 };

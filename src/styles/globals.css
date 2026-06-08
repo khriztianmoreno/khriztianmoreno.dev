@@ -25,6 +25,17 @@
   --color-blue: #006DED;
   --color-purple: #4B15C1;
 
+  /* Surface / neutral palette */
+  --color-surface: #f9f9f9;
+  --color-surface-muted: #f1f5f8;
+  --color-surface-soft: #e2e7f0;
+  --color-muted: #9391a5;
+  --color-ink: #0f2137;
+  --color-ink-soft: #343d48;
+  --color-warning: #eaa03b;
+  --color-teal: #10ac84;
+  --color-success: #30C56D;
+
   /* Box shadows */
   --shadow-primary: 0px 8px 20px -6px rgba(235, 77, 75, 0.6);
 }
@@ -227,7 +238,7 @@
     display: block;
     width: 100%;
     height: 2px;
-    background-color: #10ac84;
+    background-color: currentColor;
     transition: all 0.3s ease;
     float: right;
   }

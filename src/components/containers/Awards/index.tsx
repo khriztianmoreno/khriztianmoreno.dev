@@ -24,31 +24,14 @@ const NextButton = () => (
 const AwardsSection = () => (
   <section
     id="awards_section"
-    style={{ padding: '150px 0', backgroundColor: '#f9f9f9', position: 'relative' }}
-    className="awards-section"
+    className="awards-section relative bg-surface py-38"
   >
-    <Container noGutter mobileGutter width="1200px">
-      <div className="awards-header" style={{ width: '100%', marginBottom: 90 }}>
-        <h2
-          style={{
-            fontSize: 30,
-            fontWeight: 600,
-            color: '#302b4e',
-            lineHeight: 1.34,
-            marginBottom: 20,
-          }}
-        >
+    <Container noGutter mobileGutter fullWidth>
+      <div className="awards-header w-full mb-22">
+        <h2 className="text-heading mb-5 text-3xl font-semibold leading-snug">
           Honorable Recognitions &amp; Awards
         </h2>
-        <p
-          style={{
-            fontSize: 16,
-            fontWeight: 400,
-            color: '#43414e',
-            lineHeight: 1.5,
-            margin: 0,
-          }}
-        >
+        <p className="text-text m-0 text-base font-normal leading-normal">
           Year after year, khriztianmoreno has been recognized as one of the top
           community builder in world. It&apos;s nice to feel appreciated!
         </p>
@@ -61,80 +44,34 @@ const AwardsSection = () => (
         nextButton={<NextButton />}
       >
         {AWARDS.map((award, index) => (
-          <GlideSlide key={`award-item-${index}`} perView={4}>
-            <div
-              style={{
-                padding: '50px 30px',
-                background: '#fff',
-                borderRadius: 10,
-              }}
-              className="award-item"
-            >
-              <div style={{ minHeight: 97 }}>
+          <GlideSlide key={`award-item-${index}`}>
+            <div className="award-item bg-white rounded-lg py-12 px-7.5">
+              <div className="min-h-24">
                 <img
                   src={award.awardLogo?.src}
                   alt={`award-logo-${index}`}
-                  style={{
-                    height: 100,
-                    maxWidth: '100%',
-                    marginBottom: 30,
-                    display: 'block',
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                  }}
+                  className="block mx-auto h-25 max-w-full mb-7.5"
                 />
               </div>
-              <h2
-                style={{
-                  fontSize: 20,
-                  fontWeight: 600,
-                  color: '#302b4e',
-                  lineHeight: 1.35,
-                  textAlign: 'center',
-                  marginBottom: 17,
-                }}
-              >
+              <h2 className="text-heading mb-4 text-xl font-semibold leading-snug text-center">
                 {award.awardName}
               </h2>
-              <p
-                style={{
-                  fontSize: 16,
-                  color: '#43414e',
-                  lineHeight: 1.5,
-                  textAlign: 'center',
-                  margin: 0,
-                }}
-              >
+              <p className="text-text m-0 text-base leading-normal text-center">
                 {award.awardDetails}
               </p>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginTop: 25,
-                }}
-              >
-                <div style={{ marginRight: 20, flexShrink: 0 }}>
+              <div className="flex justify-center items-center mt-6">
+                <div className="mr-5 shrink-0">
                   <img
                     src={award.awardeeLogo?.src}
                     alt={`awardee-logo-${index}`}
-                    style={{ display: 'block', maxWidth: '100%', height: 'auto' }}
+                    className="block max-w-full h-auto"
                   />
                 </div>
                 <div>
-                  <h2
-                    style={{
-                      fontSize: 16,
-                      color: '#9391a5',
-                      lineHeight: 1.35,
-                      fontWeight: 600,
-                      marginBottom: 4,
-                    }}
-                  >
+                  <h2 className="mb-1 text-base font-semibold leading-snug text-muted">
                     {award.awardeeName}
                   </h2>
-                  <p style={{ fontSize: 12, color: '#9391a5', lineHeight: 1.35, margin: 0 }}>
+                  <p className="m-0 text-xs leading-snug text-muted">
                     {award.date}
                   </p>
                 </div>

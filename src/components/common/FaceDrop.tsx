@@ -10,14 +10,7 @@ function FaceDrop({ className }: FaceDropProps) {
   return (
     <canvas
       ref={poolRef}
-      className={className}
-      style={{
-        height: '100%',
-        left: 0,
-        position: 'absolute',
-        top: 0,
-        width: '100%',
-      }}
+      className={`absolute top-0 left-0 h-full w-full ${className ?? ''}`}
     />
   );
 }

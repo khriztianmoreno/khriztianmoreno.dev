@@ -10,57 +10,31 @@ const ErrorSec = () => {
   const pageReload = () => window.location.reload();
 
   return (
-    <div
-      style={{
-        padding: '80px 15px',
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-      }}
-    >
-      <div style={{ width: 450, maxWidth: '100%', margin: '0 auto' }}>
-        <div
-          style={{ marginBottom: 55 }}
-          className="error-image-wrapper"
-        >
-          <img src={(ErrorImage as { src?: string })?.src ?? String(ErrorImage)} alt="404" style={{ display: 'block', maxWidth: '100%', height: 'auto' }} />
+    <div className="flex items-center h-screen px-4 py-20">
+      <div className="mx-auto w-112 max-w-full">
+        <div className="error-image-wrapper mb-14">
+          <img
+            src={(ErrorImage as { src?: string })?.src ?? String(ErrorImage)}
+            alt="404"
+            className="block max-w-full h-auto"
+          />
         </div>
 
-        <h2
-          style={{
-            fontSize: 48,
-            fontWeight: 600,
-            color: '#0f2137',
-            letterSpacing: '-0.025em',
-            marginBottom: 25,
-            lineHeight: 1.31,
-            textAlign: 'center',
-            fontFamily: 'poppins',
-          }}
-        >
+        <h2 className="mb-6 text-5xl font-semibold text-ink leading-tight tracking-tight text-center font-[poppins]">
           Page not found!
         </h2>
 
-        <p
-          style={{
-            fontSize: 16,
-            color: '#343d48',
-            lineHeight: 2,
-            marginBottom: 60,
-            textAlign: 'center',
-            fontFamily: 'lato',
-          }}
-        >
+        <p className="mb-15 text-base text-ink-soft leading-loose text-center font-[lato]">
           Looks like the page you&apos;re trying to visit doesn&apos;t exist.
           Please check the URL and try your luck again.
         </p>
 
-        <div style={{ fontFamily: 'roboto', textAlign: 'center' }}>
+        <div className="text-center font-[roboto]">
           <Button
             title="Reload Page"
             icon={<RotateCcw size={24} />}
             iconPosition="left"
-            style={{ background: '#eaa03b', color: '#fff', margin: '0 8px' }}
+            className="bg-warning! text-white! mx-2"
             onClick={pageReload}
           />
           <Link href="/">
@@ -68,7 +42,7 @@ const ErrorSec = () => {
               title="Go Home"
               icon={<Home size={24} />}
               iconPosition="left"
-              style={{ background: '#e2e7f0', color: '#0f2137', margin: '0 8px' }}
+              className="bg-surface-soft! text-ink! mx-2"
             />
           </Link>
         </div>

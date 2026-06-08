@@ -5,24 +5,27 @@ interface ContainerProps {
   className?: string;
   noGutter?: boolean;
   mobileGutter?: boolean;
-  width?: string;
+  fullWidth?: boolean;
 }
 
-const Container = ({ children, className = '', noGutter, mobileGutter, width }: ContainerProps) => {
+const Container = ({
+  children,
+  className = '',
+  noGutter,
+  mobileGutter,
+  fullWidth,
+}: ContainerProps) => {
   const classes = [
     'container',
     noGutter ? 'no-gutter' : '',
     mobileGutter ? 'mobile-gutter' : '',
+    fullWidth ? 'max-w-300' : '',
     className,
   ]
     .filter(Boolean)
     .join(' ');
 
-  return (
-    <div className={classes} style={width ? { maxWidth: width } : undefined}>
-      {children}
-    </div>
-  );
+  return <div className={classes}>{children}</div>;
 };
 
 export default Container;

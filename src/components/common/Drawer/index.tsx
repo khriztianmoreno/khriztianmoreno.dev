@@ -15,7 +15,7 @@ const Drawer = ({ open, onOpenChange, drawerHandler, children }: DrawerProps) =>
 
   return (
     <>
-      <div style={{ display: 'inline-flex' }} onClick={() => onOpenChange(!open)}>{drawerHandler}</div>
+      <div className="inline-flex" onClick={() => onOpenChange(!open)}>{drawerHandler}</div>
       {open && (
         <>
           <div

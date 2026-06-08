@@ -5,18 +5,10 @@ import { FOOTER_MENU, SOCIAL_PROFILES } from '../../common/assets/data';
 const Footer = () => {
   const year = new Date().getFullYear();
   return (
-    <footer style={{ backgroundColor: '#f1f5f8' }}>
-      <Container noGutter mobileGutter width="1200px">
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '40px 0',
-          }}
-          className="footer-wrapper"
-        >
-          <div className="footer-copyright" style={{ display: 'flex', alignItems: 'center' }}>
+    <footer className="bg-surface-muted">
+      <Container noGutter mobileGutter fullWidth>
+        <div className="footer-wrapper flex items-center justify-between py-10">
+          <div className="footer-copyright flex items-center">
             <a
               href="https://www.linkedin.com/in/khriztianmoreno/"
               target="_blank"
@@ -24,26 +16,20 @@ const Footer = () => {
             >
               <span>@khriztianmoreno</span>
             </a>
-            <p style={{ margin: '0 0 0 15px' }}>Copyright © {year}</p>
+            <p className="m-0 ml-4">Copyright © {year}</p>
           </div>
 
-          <ul
-            className="footer-nav"
-            style={{ display: 'flex', listStyle: 'none', margin: 0, padding: 0 }}
-          >
+          <ul className="footer-nav flex list-none m-0 p-0">
             {FOOTER_MENU.map((item) => (
-              <li key={item.id} style={{ margin: '0 15px' }}>
-                <a href={item.path} style={{ color: '#302b4e' }}>
+              <li key={item.id} className="mx-4">
+                <a href={item.path} className="text-heading">
                   {item.label}
                 </a>
               </li>
             ))}
           </ul>
 
-          <div
-            className="footer-social"
-            style={{ display: 'flex', alignItems: 'center' }}
-          >
+          <div className="footer-social flex items-center">
             <SocialProfile
               className="bio_social"
               items={SOCIAL_PROFILES}
