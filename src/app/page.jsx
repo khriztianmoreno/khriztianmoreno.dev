@@ -1,13 +1,14 @@
+'use client';
+
 import { useEffect } from 'react';
 
-import SEO from '../components/common/SEO';
 import HeroSection from '../components/containers/Hero';
 import BioSection from '../components/containers/Bio';
 import Navbar from '../components/containers/Navbar';
 import AwardsSection from '../components/containers/Awards';
 import Footer from '../components/containers/Footer';
 
-const Portfolio = () => {
+export default function Portfolio() {
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -25,17 +26,12 @@ const Portfolio = () => {
   }, []);
 
   return (
-    <>
-      <SEO />
-      <div className="content-overflow-hidden">
-        <Navbar />
-        <HeroSection />
-        <BioSection />
-        <AwardsSection />
-        <Footer />
-      </div>
-    </>
+    <div className="content-overflow-hidden">
+      <Navbar />
+      <HeroSection />
+      <BioSection />
+      <AwardsSection />
+      <Footer />
+    </div>
   );
-};
-
-export default Portfolio;
+}

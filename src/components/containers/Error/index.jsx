@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { RotateCcw, Home } from 'lucide-react';
 
@@ -62,14 +64,12 @@ const ErrorSec = () => {
             onClick={pageReload}
           />
           <Link href="/">
-            <a>
-              <Button
-                title="Go Home"
-                icon={<Home size={24} />}
-                iconPosition="left"
-                style={{ background: '#e2e7f0', color: '#0f2137', margin: '0 8px' }}
-              />
-            </a>
+            <Button
+              title="Go Home"
+              icon={<Home size={24} />}
+              iconPosition="left"
+              style={{ background: '#e2e7f0', color: '#0f2137', margin: '0 8px' }}
+            />
           </Link>
         </div>
       </div>
