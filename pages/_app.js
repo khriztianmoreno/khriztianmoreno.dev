@@ -1,10 +1,7 @@
-import { Modal } from '@redq/reuse-modal';
-
 import { SettingsProvider } from '../components/common/contexts/Settings';
 
-import '@redq/reuse-modal/es/index.css';
-import 'swiper/css/bundle';
 import '../components/common/assets/css/flaticon.css';
+import '../styles/globals.css';
 
 console.log(
   '%c HELLO FRIENDS THANK YOU FOR COMING TO THE CONSOLE',
@@ -20,9 +17,7 @@ console.log(
 export default function CustomApp({ Component, pageProps }) {
   return (
     <SettingsProvider>
-      <Modal>
-        <Component {...pageProps} />
-      </Modal>
+      <Component {...pageProps} />
     </SettingsProvider>
   );
 }

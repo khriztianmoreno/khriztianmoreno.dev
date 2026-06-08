@@ -1,46 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useSfx } from '../../common/hooks/useSfx';
 import { usePool } from '../../common/hooks/usePoolFace';
 import FaceDrop from '../../common/FaceDrop';
 import Badge from '../../common/Badge';
 
-import HeroWrapper from './styles';
-
 export const taglines = [
   {
     rotation: '-9deg',
     size: '8.1vw',
     'size-lg': '55px',
-    text: `
-      has a lot of ideas
-    `,
+    text: 'has a lot of ideas',
   },
   {
     rotation: '18deg',
     scale: '0.99',
     size: '9.1vw',
     'size-lg': '55px',
-    text: `
-      believes in us <span class="love"></span>
-    `,
+    text: 'believes in us <span class="love"></span>',
     top: '0',
   },
   {
     size: '8.9vw',
     'size-lg': '55px',
-    text: `
-      is an <span class="thumb-up"></span> speaker
-    `,
+    text: 'is an <span class="thumb-up"></span> speaker',
   },
   {
     rotation: '-9deg',
     scale: '1',
     size: '8.1vw',
     'size-lg': '55px',
-    text: `
-      <span class="love">love</span>s to teach
-    `,
+    text: '<span class="love">love</span>s to teach',
   },
 ];
 
@@ -54,10 +44,8 @@ const CycleTagline = ({ clickHandler }) => {
 
   const handleClick = (event) => {
     event.preventDefault();
-
     setActive(true);
     setTimeout(() => setActive(false), 500);
-
     clickHandler();
   };
 
@@ -89,13 +77,12 @@ function Hero() {
   function cycleTagline() {
     addPool();
     playBoop();
-
     const index = taglineIndex + 1;
     setTaglineIndex(index < taglines.length ? index : 0);
   }
 
   return (
-    <HeroWrapper id="banner_section">
+    <section className="hero-wrapper" id="banner_section">
       <FaceDrop className="boops" />
       <h1 className="hero">
         <Badge />
@@ -112,7 +99,7 @@ function Hero() {
         />
       </h1>
       <CycleTagline clickHandler={cycleTagline} />
-    </HeroWrapper>
+    </section>
   );
 }
 

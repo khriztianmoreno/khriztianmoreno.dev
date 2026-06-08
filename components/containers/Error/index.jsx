@@ -1,107 +1,86 @@
-import PropTypes from 'prop-types';
 import Link from 'next/link';
-import Icon from 'react-icons-kit';
+import { RotateCcw, Home } from 'lucide-react';
 
-import Box from '../../common/Box';
 import Button from '../../common/Button';
 import ErrorImage from '../../common/assets/image/404.svg';
-import Heading from '../../common/Heading';
-import Image from '../../common/Image';
-import Text from '../../common/Text';
 
-import { home } from 'react-icons-kit/entypo/home';
-import { ccw } from 'react-icons-kit/entypo/ccw';
+const ErrorSec = () => {
+  const pageReload = () => window.location.reload();
 
-import { ErrorWrapper, ErrorConatent, ButtonWrapper } from './styles';
-
-const ErrorSec = ({ imageWrapper, title, text, reloadButton, homeButton }) => {
-  const pageReload = () => {
-    window.location.reload();
-  };
   return (
-    <ErrorWrapper>
-      <ErrorConatent>
-        <Box {...imageWrapper} className="image-wrapper">
-          <Image src={ErrorImage} alt="404" />
-        </Box>
-        <Heading {...title} content="Page not found!" />
-        <Text
-          {...text}
-          content="Looks like the page you're trying to visit dosen't exist. Please check the URL and try your luck again."
-        />
-        <ButtonWrapper>
+    <div
+      style={{
+        padding: '80px 15px',
+        height: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
+      <div style={{ width: 450, maxWidth: '100%', margin: '0 auto' }}>
+        <div
+          style={{ marginBottom: 55 }}
+          className="error-image-wrapper"
+        >
+          <img src={ErrorImage?.src || ErrorImage} alt="404" style={{ display: 'block', maxWidth: '100%', height: 'auto' }} />
+        </div>
+
+        <h2
+          style={{
+            fontSize: 48,
+            fontWeight: 600,
+            color: '#0f2137',
+            letterSpacing: '-0.025em',
+            marginBottom: 25,
+            lineHeight: 1.31,
+            textAlign: 'center',
+            fontFamily: 'poppins',
+          }}
+        >
+          Page not found!
+        </h2>
+
+        <p
+          style={{
+            fontSize: 16,
+            color: '#343d48',
+            lineHeight: 2,
+            marginBottom: 60,
+            textAlign: 'center',
+            fontFamily: 'lato',
+          }}
+        >
+          Looks like the page you&apos;re trying to visit doesn&apos;t exist.
+          Please check the URL and try your luck again.
+        </p>
+
+        <div style={{ fontFamily: 'roboto', textAlign: 'center' }}>
           <Button
-            {...reloadButton}
             title="Reload Page"
-            icon={<Icon icon={ccw} size={24} />}
-            className="domain_search_button"
+            icon={<RotateCcw size={24} />}
+            iconPosition="left"
+            style={{ background: '#eaa03b', color: '#fff', margin: '0 8px' }}
             onClick={pageReload}
           />
           <Link href="/">
             <a>
               <Button
-                {...homeButton}
                 title="Go Home"
-                icon={<Icon icon={home} size={24} />}
-                className="domain_search_button"
+                icon={<Home size={24} />}
+                iconPosition="left"
+                style={{ background: '#e2e7f0', color: '#0f2137', margin: '0 8px' }}
               />
             </a>
           </Link>
-        </ButtonWrapper>
-      </ErrorConatent>
-    </ErrorWrapper>
+        </div>
+      </div>
+
+      <style>{`
+        @media (max-width: 1480px) {
+          .error-image-wrapper { max-width: 80%; margin-left: auto; margin-right: auto; }
+        }
+      `}</style>
+    </div>
   );
-};
-
-ErrorSec.propTypes = {
-  imageWrapper: PropTypes.object,
-};
-
-ErrorSec.defaultProps = {
-  imageWrapper: {
-    mb: ['40px', '55px'],
-  },
-  title: {
-    fontSize: ['26px', '32px', '38px', '48px'],
-    fontWeight: '400',
-    color: '#0f2137',
-    letterSpacing: '-0.025em',
-    mb: ['20px', '25px', '25px', '25px', '35px'],
-    lineHeight: '1.31',
-    textAlign: 'center',
-    fontFamily: 'poppins',
-    fontWeight: '600',
-  },
-  text: {
-    fontSize: ['15px', '16px', '16px', '16px', '16px'],
-    color: '#343d48',
-    lineHeight: '2',
-    mb: ['30px', '40px', '50px', '60px'],
-    textAlign: 'center',
-    fontFamily: 'lato',
-  },
-  reloadButton: {
-    type: 'button',
-    fontSize: '16px',
-    fontWeight: '500',
-    color: '#fff',
-    pl: ['15px', '22px'],
-    pr: ['15px', '22px'],
-    iconPosition: 'left',
-    bg: '#eaa03b',
-    fontFamily: 'lato',
-  },
-  homeButton: {
-    type: 'button',
-    fontSize: '16px',
-    fontWeight: '500',
-    color: '#0f2137',
-    pl: ['15px', '22px'],
-    pr: ['15px', '22px'],
-    iconPosition: 'left',
-    bg: '#e2e7f0',
-    fontFamily: 'lato',
-  },
 };
 
 export default ErrorSec;

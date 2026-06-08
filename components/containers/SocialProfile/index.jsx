@@ -1,37 +1,24 @@
-import Icon from 'react-icons-kit';
-import { socialDribbbleOutline } from 'react-icons-kit/ionicons/socialDribbbleOutline';
-
-import { SocialProfileWrapper, SocialProfileItem, IconAnchor } from './styles';
-
-const SocialProfile = ({ items = [], className, iconSize, color }) => {
-  const addAllClasses = ['social_profiles'];
-
-  if (className) {
-    addAllClasses.push(className);
-  }
+const SocialProfile = ({ items = [], className = '', iconSize = 22 }) => {
+  const classes = ['social_profiles', className].filter(Boolean).join(' ');
 
   return (
-    <SocialProfileWrapper className={addAllClasses.join(' ')}>
-      {items.map((item, index) => (
-        <SocialProfileItem
-          key={`social-item-${index}`}
-          className="social_profile_item"
-        >
-          <IconAnchor
-            href={item.url || '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="social icon"
-            color={color}
-          >
-            <Icon
-              icon={item.icon || socialDribbbleOutline}
-              size={iconSize || 22}
-            />
-          </IconAnchor>
-        </SocialProfileItem>
-      ))}
-    </SocialProfileWrapper>
+    <div className={classes}>
+      {items.map((item, index) => {
+        const Icon = item.icon;
+        return (
+          <div key={`social-item-${index}`} className="social_profile_item">
+            <a
+              href={item.url || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="social icon"
+            >
+              <Icon size={iconSize} />
+            </a>
+          </div>
+        );
+      })}
+    </div>
   );
 };
 

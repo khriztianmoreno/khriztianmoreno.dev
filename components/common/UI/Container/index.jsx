@@ -1,30 +1,17 @@
-import ContainerWrapper from './style';
-
-const Container = ({
-  children,
-  className,
-  fullWidth,
-  noGutter,
-  mobileGutter,
-  width,
-}) => {
-  // Add all classs to an array
-  const addAllClasses = ['container'];
-  // className prop checking
-  if (className) {
-    addAllClasses.push(className);
-  }
+const Container = ({ children, className = '', noGutter, mobileGutter, width }) => {
+  const classes = [
+    'container',
+    noGutter ? 'no-gutter' : '',
+    mobileGutter ? 'mobile-gutter' : '',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <ContainerWrapper
-      className={addAllClasses.join(' ')}
-      fullWidth={fullWidth}
-      noGutter={noGutter}
-      width={width}
-      mobileGutter={mobileGutter}
-    >
+    <div className={classes} style={width ? { maxWidth: width } : undefined}>
       {children}
-    </ContainerWrapper>
+    </div>
   );
 };
 

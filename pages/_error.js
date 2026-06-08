@@ -2,7 +2,6 @@ import Head from 'next/head';
 
 import ErrorSec from '../components/containers/Error';
 
-import { ResetCSS } from '../components/common/assets/css/style';
 export default function Error({ statusCode }) {
   return (
     <>
@@ -13,7 +12,6 @@ export default function Error({ statusCode }) {
           rel="stylesheet"
         />
       </Head>
-      <ResetCSS />
       <div>
         {statusCode ? (
           `An error ${statusCode} occurred on server`
