@@ -1,103 +1,148 @@
 import Matter from 'matter-js';
-import { useEffect, useRef, type RefObject } from 'react';
 
 const { Engine, Render, Runner, World, Bodies } = Matter;
+
+const FACE_IMAGE =
+  'https://res.cloudinary.com/khriztianmoreno/image/upload/q_auto,f_auto,w_90/v1604105684/KM-brand/profile%20imgs/CARA_KHRIZTIAN_final-01.png';
 
 const engine = Engine.create();
 const runner = Runner.create();
 
-function createPool(url: string): void {
-  const pool = Bodies.circle(
-    Math.round(Math.random() * window.innerWidth),
-    -30,
-    35,
-    {
-      angle: Math.PI * (Math.random() * 2 - 1),
-      friction: 0.001,
-      frictionAir: 0.01,
-      restitution: 0.75,
-      render: {
-        sprite: {
-          texture: url,
-          xScale: 1,
-          yScale: 1,
-        },
+let render: Matter.Render | null = null;
+let activeCanvas: HTMLCanvasElement | null = null;
+let mountCount = 0;
+
+function getViewportSize() {
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+}
+
+function syncCanvasSize(canvas: HTMLCanvasElement) {
+  const { width, height } = getViewportSize();
+  canvas.width = width;
+  canvas.height = height;
+  canvas.style.width = `${width}px`;
+  canvas.style.height = `${height}px`;
+  return { width, height };
+}
+
+function createFaceBody(width: number) {
+  return Bodies.circle(Math.round(Math.random() * width), -30, 35, {
+    angle: Math.PI * (Math.random() * 2 - 1),
+    friction: 0.001,
+    frictionAir: 0.01,
+    restitution: 0.75,
+    render: {
+      fillStyle: 'transparent',
+      strokeStyle: 'transparent',
+      lineWidth: 0,
+      sprite: {
+        texture: FACE_IMAGE,
+        xScale: 1,
+        yScale: 1,
       },
-    }
-  );
-
-  World.add(engine.world, [pool]);
+    },
+  });
 }
 
-export interface UsePoolReturn {
-  poolRef: RefObject<HTMLCanvasElement | null>;
-  addPool: () => void;
+function createBoundaries(width: number, height: number) {
+  const options = {
+    isStatic: true,
+    render: {
+      fillStyle: 'transparent',
+      strokeStyle: 'transparent',
+      lineWidth: 0,
+    },
+  };
+
+  return [
+    Bodies.rectangle(width / 2, height, width + 20, 4, options),
+    Bodies.rectangle(0, height / 2, 4, height + 60, options),
+    Bodies.rectangle(width, height / 2, 4, height + 60, options),
+  ];
 }
 
-export function usePool(): UsePoolReturn {
-  const ref = useRef<HTMLCanvasElement | null>(null);
+function addBoundaries(width: number, height: number) {
+  World.add(engine.world, createBoundaries(width, height));
+}
 
-  useEffect(() => {
-    const canvas = ref.current;
+export function addPool() {
+  const { width } = getViewportSize();
+  World.add(engine.world, [createFaceBody(width)]);
+}
 
-    if (!canvas) {
-      return;
-    }
+function handleResize() {
+  if (!render || !activeCanvas) return;
 
-    const height = canvas.clientHeight;
-    const width = canvas.clientWidth;
+  const nextSize = syncCanvasSize(activeCanvas);
+  render.options.width = nextSize.width;
+  render.options.height = nextSize.height;
+  Render.setPixelRatio(render, window.devicePixelRatio || 1);
 
-    const render = Render.create({
-      element: document.createElement('div'),
+  World.clear(engine.world, false);
+  addBoundaries(nextSize.width, nextSize.height);
+}
+
+function destroyPhysics() {
+  if (!render) return;
+
+  window.removeEventListener('resize', handleResize);
+  Render.stop(render);
+  Runner.stop(runner);
+  World.clear(engine.world, false);
+  Engine.clear(engine);
+  render = null;
+  activeCanvas = null;
+}
+
+export function mountFaceCanvas(className = '') {
+  if (typeof document === 'undefined') {
+    return () => {};
+  }
+
+  mountCount += 1;
+
+  const canvas = document.createElement('canvas');
+  canvas.setAttribute('aria-hidden', 'true');
+  canvas.className = `face-drop-canvas pointer-events-none fixed inset-0 z-[10050] ${className}`.trim();
+  document.body.appendChild(canvas);
+  activeCanvas = canvas;
+
+  const { width, height } = syncCanvasSize(canvas);
+
+  if (!render) {
+    render = Render.create({
       canvas,
-      engine: engine,
+      engine,
       options: {
-        height,
         width,
+        height,
         background: 'transparent',
         wireframes: false,
+        pixelRatio: window.devicePixelRatio || 1,
       },
     });
 
-    const boundaries = {
-      isStatic: true,
-      render: {
-        fillStyle: 'transparent',
-        strokeStyle: 'transparent',
-      },
-    };
-    const ground = Bodies.rectangle(
-      width / 2,
-      height,
-      width + 20,
-      4,
-      boundaries
-    );
-    const leftWall = Bodies.rectangle(
-      0,
-      height / 2,
-      4,
-      height + 60,
-      boundaries
-    );
-    const rightWall = Bodies.rectangle(
-      width,
-      height / 2,
-      4,
-      height + 60,
-      boundaries
-    );
-
-    World.add(engine.world, [ground, leftWall, rightWall]);
-
+    render.canvas.style.background = 'transparent';
+    addBoundaries(width, height);
     Render.run(render);
     Runner.run(runner, engine);
-  }, [ref]);
+    window.addEventListener('resize', handleResize);
+  }
 
-  const faceImage =
-    'https://res.cloudinary.com/khriztianmoreno/image/upload/q_auto,f_auto,w_90/v1604105684/KM-brand/profile%20imgs/CARA_KHRIZTIAN_final-01.png';
+  return () => {
+    canvas.remove();
 
-  const addPool = () => createPool(faceImage);
+    if (activeCanvas === canvas) {
+      activeCanvas = null;
+    }
 
-  return { poolRef: ref, addPool };
+    mountCount -= 1;
+
+    if (mountCount === 0) {
+      destroyPhysics();
+    }
+  };
 }

@@ -32,8 +32,8 @@ const AwardsSection = () => (
           Honorable Recognitions &amp; Awards
         </h2>
         <p className="text-text m-0 text-base font-normal leading-normal">
-          Year after year, khriztianmoreno has been recognized as one of the top
-          community builder in world. It&apos;s nice to feel appreciated!
+          Recognized by Google, Microsoft, Amazon Web Services, and Cloudinary for
+          technical leadership and community impact across Latin America and beyond.
         </p>
       </div>
 

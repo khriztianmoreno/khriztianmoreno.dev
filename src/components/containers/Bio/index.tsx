@@ -2,11 +2,11 @@ import Container from '../../common/UI/Container';
 import SocialProfile from '../SocialProfile';
 import { SOCIAL_PROFILES } from '../../common/assets/data';
 
-const about = `Community leader and altruistic speaker. Currently co-organizes Medellin.js (Biggest JavaScript user group in Colombia), Avanet and JAMstack Medellin communities.
+const about = `Google Developer Expert, technical evangelist, and community leader with 15+ years designing and shipping scalable web architectures. Based in Medellín, Colombia, with hands-on experience at MercadoLibre, Globant, and Mattersupply.
 
-On a daily basis he uses: JavaScript (ES6), React, Gatsby, CSS (inJS), GraphQL, just to name the most important bits.
+Co-organizes MedellinJS — Colombia's largest JavaScript community with 7,900+ developers — alongside Avanet, JAMstack Medellín, and Build with AI.
 
-Helps others learn by doing through articles, videos, and courses about JavaScript, React, and the static web.`;
+Believes in learn by doing: international talks, workshops, articles, and courses on AI-powered web development, performance engineering, and modern architecture.`;
 
 const Bio = () => (
   <section id="me_bio" className="bg-green py-20">
@@ -20,7 +20,7 @@ const Bio = () => (
       <div className="bio-content-wrapper flex items-center rounded-sm bg-white">
         <div className="bio-text-content">
           <h2 className="text-heading mb-5 text-4xl font-bold leading-tight tracking-tight">
-            He&apos;s Javascript Developer
+            Full Stack AI Engineer &amp; Technical Evangelist
           </h2>
           <p className="text-text mb-7 text-base leading-loose whitespace-pre-line">
             {about}

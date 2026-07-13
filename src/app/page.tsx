@@ -6,6 +6,7 @@ import HeroSection from '../components/containers/Hero';
 import BioSection from '../components/containers/Bio';
 import Navbar from '../components/containers/Navbar';
 import AwardsSection from '../components/containers/Awards';
+import TimelineSection from '../components/containers/Timeline';
 import Footer from '../components/containers/Footer';
 
 export default function Portfolio() {
@@ -31,6 +32,7 @@ export default function Portfolio() {
       <HeroSection />
       <BioSection />
       <AwardsSection />
+      <TimelineSection />
       <Footer />
     </div>
   );

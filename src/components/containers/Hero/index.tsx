@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { useSfx } from '../../common/hooks/useSfx';
-import { usePool } from '../../common/hooks/usePoolFace';
-import FaceDrop from '../../common/FaceDrop';
+import { addPool, mountFaceCanvas } from '../../common/hooks/usePoolFace';
 import Badge from '../../common/Badge';
 
 interface TaglineItem {
@@ -19,14 +18,14 @@ export const taglines: TaglineItem[] = [
     rotation: '-9deg',
     size: '8.1vw',
     'size-lg': '55px',
-    text: 'has a lot of ideas',
+    text: 'builds with AI & the modern web',
   },
   {
     rotation: '18deg',
     scale: '0.99',
     size: '9.1vw',
     'size-lg': '55px',
-    text: 'believes in us <span class="love"></span>',
+    text: 'is a Google Developer Expert',
     top: '0',
   },
   {
@@ -78,14 +77,15 @@ const CycleTagline = ({ clickHandler }: CycleTaglineProps) => {
 };
 
 function Hero() {
-  const { addPool } = usePool();
   const { playBoop } = useSfx();
   const [taglineIndex, setTaglineIndex] = useState(0);
   const tagline = taglines[taglineIndex];
   const taglineRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    const cleanup = mountFaceCanvas('boops');
     addPool();
+    return cleanup;
   }, []);
 
   // Tagline rotation/scale/size come from runtime data, so they are exposed
@@ -108,18 +108,19 @@ function Hero() {
   }
 
   return (
-    <section className="hero-wrapper" id="banner_section">
-      <FaceDrop className="boops" />
-      <h1 className="hero">
-        <Badge />
-        <span
-          ref={taglineRef}
-          className="hero-tagline"
-          dangerouslySetInnerHTML={{ __html: tagline?.text ?? '' }}
-        />
-      </h1>
-      <CycleTagline clickHandler={cycleTagline} />
-    </section>
+    <>
+      <section className="hero-wrapper" id="banner_section">
+        <h1 className="hero">
+          <Badge />
+          <span
+            ref={taglineRef}
+            className="hero-tagline"
+            dangerouslySetInnerHTML={{ __html: tagline?.text ?? '' }}
+          />
+        </h1>
+        <CycleTagline clickHandler={cycleTagline} />
+      </section>
+    </>
   );
 }
 

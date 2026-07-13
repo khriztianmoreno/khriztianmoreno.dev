@@ -107,6 +107,7 @@ export const MENU_ITEMS: MenuItem[] = [
   { label: 'START', path: '#banner_section', offset: '0' },
   { label: 'ME', path: '#me_bio', offset: '70' },
   { label: 'AWARDS', path: '#awards_section', offset: '0' },
+  { label: 'TIMELINE', path: '#timeline_section', offset: '0' },
 ];
 
 export interface AwardItem {
@@ -120,36 +121,36 @@ export interface AwardItem {
 
 export const AWARDS: AwardItem[] = [
   {
-    awardLogo: AwardMVP,
-    awardName: '#MVP',
-    awardDetails: 'Developer Technologies',
-    awardeeLogo: MicrosoftLogo,
-    awardeeName: 'Awardee',
-    date: '2020 - currently',
-  },
-  {
     awardLogo: AwardGDE,
     awardName: '#GDE',
-    awardDetails: 'Web Technologies',
+    awardDetails: 'Web Technologies & W3C Standards',
     awardeeLogo: GoogleLogo,
-    awardeeName: 'Awardee',
+    awardeeName: 'Google',
     date: '2021 - currently',
+  },
+  {
+    awardLogo: AwardMVP,
+    awardName: '#MVP',
+    awardDetails: 'Developer Technologies & Cloud Platforms',
+    awardeeLogo: MicrosoftLogo,
+    awardeeName: 'Microsoft',
+    date: '2020 - 2025',
   },
   {
     awardLogo: AwardAWS,
     awardName: '#AWSCommunity',
-    awardDetails: 'Amazon Community Builder',
+    awardDetails: 'Cloud & Serverless Architectures',
     awardeeLogo: Amazon,
-    awardeeName: 'Awardee',
-    date: '2021 - currently',
+    awardeeName: 'Amazon Web Services',
+    date: '2021 - 2025',
   },
   {
     awardLogo: AwardMDE,
     awardName: '#MDE',
-    awardDetails: 'Cloudinary Media Expert',
+    awardDetails: 'Media Performance & Web Optimization',
     awardeeLogo: Cloudinary,
-    awardeeName: 'Awardee',
-    date: '2019 - currently',
+    awardeeName: 'Cloudinary',
+    date: '2019 - 2025',
   },
 ];
 

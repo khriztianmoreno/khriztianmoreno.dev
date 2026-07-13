@@ -5,15 +5,16 @@ import '../components/common/assets/css/flaticon.css';
 import '../styles/globals.css';
 
 export const metadata: Metadata = {
-  title: 'A Very khriztianmoreno Website — Javascript Developer 👨🏼‍💻🇨🇴💻',
+  title:
+    'Khriztian Moreno — Full Stack AI Engineer & Technical Evangelist 👨🏼‍💻🇨🇴',
   description:
-    'khriztianmoreno is a web developer, educator, and community builder. Helps others learn by doing through articles, videos, and courses about JavaScript, React, and the static web.',
+    'Full Stack AI Engineer, Google Developer Expert, and community leader from Medellín, Colombia. 15+ years building scalable web architectures at MercadoLibre, Globant, and more. Speaker, educator, and open-source contributor.',
   metadataBase: new URL('https://khriztianmoreno.dev'),
   openGraph: {
     type: 'website',
     url: 'https://khriztianmoreno.dev/',
     description:
-      'khriztianmoreno is a web developer, educator, and community builder.',
+      'Full Stack AI Engineer, Google Developer Expert, and community leader. Speaker, educator, and open-source contributor from Medellín, Colombia.',
     images: [
       'https://res.cloudinary.com/khriztianmoreno/image/upload/v1591324325/KM-brand/card/kristian%20moreno-6_card-front%402x-assets/card-front.png',
     ],
@@ -27,7 +28,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <head>

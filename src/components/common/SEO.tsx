@@ -9,8 +9,8 @@ interface SEOProps {
 }
 
 const SEO = ({
-  title = 'A Very khriztianmoreno Website — Javascript Developer 👨🏼‍💻🇨🇴💻',
-  description = 'khriztianmoreno is a web developer, educator, and community builder. Helps others learn by doing through articles, videos, and courses about JavaScript, React, and the static web.',
+  title = 'Khriztian Moreno — Full Stack AI Engineer & Technical Evangelist 👨🏼‍💻🇨🇴',
+  description = 'Full Stack AI Engineer, Google Developer Expert, and community leader from Medellín, Colombia. 15+ years building scalable web architectures. Speaker, educator, and open-source contributor.',
   url = 'https://khriztianmoreno.dev/',
   image = 'https://res.cloudinary.com/khriztianmoreno/image/upload/v1591324325/KM-brand/card/kristian%20moreno-6_card-front%402x-assets/card-front.png',
   post = false,

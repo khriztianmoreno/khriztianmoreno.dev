@@ -395,8 +395,12 @@
   }
 
   .hero-wrapper .boops {
-    mix-blend-mode: overlay;
-    z-index: 10;
+    background: transparent;
+    z-index: 10050;
+  }
+
+  .face-drop-canvas {
+    background: transparent !important;
   }
 
   .hero-wrapper .cycle {
