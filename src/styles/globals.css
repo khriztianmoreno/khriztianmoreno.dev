@@ -613,7 +613,7 @@
   .hero-wrapper .hero-tagline {
     color: var(--color-primary);
     display: block;
-    font-family: var(--font-display);
+    font-family: var(--font-mono);
     font-size: calc(var(--size, 7.42vw) * 0.65);
     line-height: 1.15;
     margin-top: -0.5rem;
@@ -673,18 +673,18 @@
      The radial glow slowly drifts left-to-right and back so the
      background feels alive rather than static; colors never change. */
   @keyframes page-gradient-drift {
-    0%   { background-position: 15% 0%, 0% 0%; }
-    50%  { background-position: 85% 0%, 0% 0%; }
-    100% { background-position: 15% 0%, 0% 0%; }
+    0%   { background-position: 0% 0%, 0% 0%; }
+    50%  { background-position: 100% 0%, 0% 0%; }
+    100% { background-position: 0% 0%, 0% 0%; }
   }
 
   .page-gradient {
     background:
-      radial-gradient(circle at 50% 0%, rgba(96, 36, 193, 0.22) 0%, transparent 45%),
+      radial-gradient(circle at 50% 0%, rgba(96, 36, 193, 0.55) 0%, transparent 38%),
       linear-gradient(180deg, var(--color-background) 0%, var(--color-surface-deep) 55%, #000000 100%);
     background-attachment: fixed;
-    background-size: 200% 200%, 100% 100%;
-    animation: page-gradient-drift 26s ease-in-out infinite;
+    background-size: 260% 100%, 100% 100%;
+    animation: page-gradient-drift 18s ease-in-out infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {
