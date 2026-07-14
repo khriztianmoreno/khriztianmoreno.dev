@@ -12,17 +12,14 @@
 
 ``` bash
 # install dependencies
-$ npm install # Or yarn install
+$ pnpm install
 
 # serve with hot reload at localhost:3000
-$ npm run dev
+$ pnpm dev
 
 # build for production and launch server
-$ npm run build
-$ npm start
-
-# generate static project
-$ npm run export
+$ pnpm build
+$ pnpm start
 ```
 
 For detailed explanation on how things work, checkout the [Next.js docs](https://nextjs.org/docs/getting-started).
