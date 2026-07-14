@@ -2,7 +2,7 @@ import FadeIn from '../../common/FadeIn';
 import { BLOG_POSTS } from '@/data/blog';
 
 const BlogSection = () => (
-  <section id="blog_section" className="relative bg-surface px-6 py-30">
+  <section id="blog_section" className="relative px-6 py-30">
     <div className="mx-auto mb-16 max-w-300 text-center">
       <span className="mb-4 block font-mono text-sm uppercase tracking-[0.2em] text-primary">
         Writing

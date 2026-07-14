@@ -5,7 +5,7 @@ import { FOOTER_MENU, SOCIAL_PROFILES } from '../../common/assets/data';
 const Footer = () => {
   const year = new Date().getFullYear();
   return (
-    <footer className="border-t border-white/5 bg-surface-dim text-on-surface-variant">
+    <footer className="border-t border-white/5 text-on-surface-variant">
       <Container noGutter mobileGutter fullWidth>
         <div className="footer-wrapper flex items-center justify-between py-10">
           <div className="footer-copyright flex items-center">

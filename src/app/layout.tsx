@@ -44,7 +44,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-background text-on-surface">
+      <body className="page-gradient text-on-surface">
         <Providers>{children}</Providers>
       </body>
     </html>

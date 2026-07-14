@@ -24,7 +24,7 @@ const NextButton = () => (
 const AwardsSection = () => (
   <section
     id="awards_section"
-    className="awards-section relative bg-surface py-38"
+    className="awards-section relative py-38"
   >
     <Container noGutter mobileGutter fullWidth>
       <div className="awards-header w-full mb-22">

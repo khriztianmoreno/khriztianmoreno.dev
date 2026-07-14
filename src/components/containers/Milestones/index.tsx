@@ -4,7 +4,7 @@ import { MILESTONES } from '@/data/milestones';
 const MilestonesSection = () => (
   <section
     id="milestones_section"
-    className="relative overflow-hidden bg-surface px-6 py-30"
+    className="relative overflow-hidden px-6 py-30"
   >
     <div className="mx-auto mb-24 max-w-300 text-center">
       <span className="mb-4 block font-mono text-sm uppercase tracking-[0.2em] text-primary">

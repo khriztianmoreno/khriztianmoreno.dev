@@ -67,7 +67,7 @@ const TimelineEntryDetails = ({ entry }: { entry: TimelineEntry }) => {
 const TimelineSection = () => (
   <section
     id="timeline_section"
-    className="timeline-section relative bg-surface py-38"
+    className="timeline-section relative py-38"
   >
     <Container noGutter mobileGutter fullWidth>
       <div className="timeline-header w-full mb-22">

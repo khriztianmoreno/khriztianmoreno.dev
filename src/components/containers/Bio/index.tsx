@@ -9,7 +9,7 @@ Co-organizes MedellinJS — Colombia's largest JavaScript community with 7,900+ 
 Believes in learn by doing: international talks, workshops, articles, and courses on AI-powered web development, performance engineering, and modern architecture.`;
 
 const Bio = () => (
-  <section id="me_bio" className="bg-surface py-20">
+  <section id="me_bio" className="py-20">
     <Container noGutter mobileGutter fullWidth>
       <div className="mx-auto mb-15 max-w-136 text-center">
         <h2 className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-5xl font-bold leading-tight tracking-tight text-transparent">

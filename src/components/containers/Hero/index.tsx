@@ -1,69 +1,125 @@
-import Magnet from '../../common/Magnet';
+'use client';
 
-const FACE_IMAGE =
-  'https://res.cloudinary.com/khriztianmoreno/image/upload/q_auto,f_auto,w_90/v1604105684/KM-brand/profile%20imgs/CARA_KHRIZTIAN_final-01.png';
+import { useEffect, useRef, useState } from 'react';
+
+import Badge from '../../common/Badge';
+import { useSfx } from '../../common/hooks/useSfx';
+import { addPool, mountFaceCanvas } from '../../common/hooks/usePoolFace';
+
+interface TaglineItem {
+  rotation?: string;
+  size?: string;
+  'size-lg'?: string;
+  text: string;
+  top?: string;
+  scale?: string;
+}
+
+const taglines: TaglineItem[] = [
+  {
+    rotation: '-9deg',
+    size: '8.1vw',
+    'size-lg': '55px',
+    text: 'builds with AI & the modern web',
+  },
+  {
+    rotation: '18deg',
+    scale: '0.99',
+    size: '9.1vw',
+    'size-lg': '55px',
+    text: 'is a Google Developer Expert',
+    top: '0',
+  },
+  {
+    size: '8.9vw',
+    'size-lg': '55px',
+    text: 'is an 👍 speaker',
+  },
+  {
+    rotation: '-9deg',
+    scale: '1',
+    size: '8.1vw',
+    'size-lg': '55px',
+    text: '<span class="love">love</span>s to teach',
+  },
+];
+
+interface CycleTaglineProps {
+  clickHandler: () => void;
+}
+
+function CycleTagline({ clickHandler }: CycleTaglineProps) {
+  const [active, setActive] = useState(false);
+
+  const images: Record<'off' | 'on', string> = {
+    off: 'https://res.cloudinary.com/khriztianmoreno/image/upload/v1604543820/assets/rotate-off.png',
+    on: 'https://res.cloudinary.com/khriztianmoreno/image/upload/v1604543820/assets/rotate-on.png',
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    setActive(true);
+    setTimeout(() => setActive(false), 500);
+    clickHandler();
+  };
+
+  return (
+    <a
+      href="#hero-tagline"
+      onClick={handleClick}
+      className={`cycle ${active ? 'active' : ''}`}
+    >
+      <img
+        src={images[active ? 'on' : 'off']}
+        alt="drawing of two arrows pointing in a circle"
+      />
+      <span className="push-me">push me</span>
+    </a>
+  );
+}
 
 function Hero() {
+  const { playBoop } = useSfx();
+  const [taglineIndex, setTaglineIndex] = useState(0);
+  const tagline = taglines[taglineIndex];
+  const taglineRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const cleanup = mountFaceCanvas('boops');
+    addPool();
+    return cleanup;
+  }, []);
+
+  // Tagline rotation/scale/size come from runtime data, so they are exposed
+  // as CSS variables through `setProperty` to avoid inline `style` props.
+  useEffect(() => {
+    const el = taglineRef.current;
+    if (!el) return;
+    el.style.setProperty('--top', tagline?.top ?? '-7px');
+    el.style.setProperty('--rotation', tagline?.rotation ?? '0deg');
+    el.style.setProperty('--scale', String(tagline?.scale ?? 1.1));
+    el.style.setProperty('--size', tagline?.size ?? '8.1vw');
+    el.style.setProperty('--size-lg', tagline?.['size-lg'] ?? '44px');
+  }, [tagline]);
+
+  function cycleTagline() {
+    addPool();
+    playBoop();
+    const index = taglineIndex + 1;
+    setTaglineIndex(index < taglines.length ? index : 0);
+  }
+
   return (
-    <section
-      id="banner_section"
-      className="hero-gradient relative flex min-h-screen w-full items-center justify-center overflow-hidden pt-32 pb-20"
-    >
-      <div className="relative z-10 mx-auto grid w-full max-w-300 grid-cols-1 items-center gap-12 px-6 lg:grid-cols-2">
-        <div className="order-2 text-center lg:order-1 lg:text-left">
-          <span className="mb-4 block font-mono text-sm uppercase tracking-[0.3em] text-primary">
-            Full Stack AI Engineer &amp; Technical Evangelist
-          </span>
-
-          <h1 className="mb-6 font-display text-4xl font-extrabold leading-tight tracking-tight md:text-6xl">
-            Khriztian Moreno{' '}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              builds with AI &amp; the modern web
-            </span>
-          </h1>
-
-          <p className="mx-auto mb-10 max-w-xl text-lg font-light text-on-surface-variant opacity-90 lg:mx-0">
-            Google Developer Expert, international speaker, and community
-            leader who loves to teach — 15+ years designing scalable web
-            architectures across Latin America and beyond.
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-6 lg:justify-start">
-            <Magnet>
-              <a
-                href="#awards_section"
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-lg font-bold text-on-primary transition-all hover:shadow-neon"
-              >
-                Explore The Journey
-              </a>
-            </Magnet>
-            <Magnet>
-              <a
-                href="https://www.linkedin.com/in/khriztianmoreno/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 text-lg font-bold text-white backdrop-blur-sm transition-all hover:border-primary"
-              >
-                Let&apos;s Talk
-              </a>
-            </Magnet>
-          </div>
-        </div>
-
-        <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
-          <div className="relative h-72 w-72 md:h-96 md:w-96">
-            <div className="absolute inset-0 animate-pulse rounded-full bg-primary/20 blur-3xl" />
-            <div className="absolute -inset-4 animate-[spin_20s_linear_infinite] rounded-full border border-primary/20" />
-            <div className="relative h-full w-full overflow-hidden rounded-full border-4 border-white/10 shadow-2xl">
-              <img
-                src={FACE_IMAGE}
-                alt="Khriztian Moreno"
-                className="h-full w-full object-cover grayscale transition-all duration-700 hover:grayscale-0"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+    <section id="banner_section" className="hero-wrapper overflow-hidden">
+      <h1 className="hero">
+        <Badge />
+        <span
+          ref={taglineRef}
+          className="hero-tagline"
+          dangerouslySetInnerHTML={{ __html: tagline?.text ?? '' }}
+        />
+      </h1>
+      <CycleTagline clickHandler={cycleTagline} />
     </section>
   );
 }
