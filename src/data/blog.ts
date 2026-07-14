@@ -7,7 +7,7 @@ export interface BlogPost {
   displayDate: string;
 }
 
-export const BLOG_FETCHED_AT = '2026-07-14T14:11:43.481Z';
+export const BLOG_FETCHED_AT = '2026-07-14T16:32:53.426Z';
 
 export const BLOG_POSTS: BlogPost[] = [
   {
