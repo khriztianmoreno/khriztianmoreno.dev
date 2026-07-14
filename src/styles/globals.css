@@ -669,13 +669,28 @@
   /* ─── Continuous page gradient: Hero through Footer ───
      Applied directly on <body> and fixed to the viewport, so it never
      scrolls or seams between sections — sections themselves stay
-     background-transparent so this shows through everywhere. */
+     background-transparent so this shows through everywhere.
+     The radial glow slowly drifts left-to-right and back so the
+     background feels alive rather than static; colors never change. */
+  @keyframes page-gradient-drift {
+    0%   { background-position: 15% 0%, 0% 0%; }
+    50%  { background-position: 85% 0%, 0% 0%; }
+    100% { background-position: 15% 0%, 0% 0%; }
+  }
+
   .page-gradient {
     background:
       radial-gradient(circle at 50% 0%, rgba(96, 36, 193, 0.22) 0%, transparent 45%),
       linear-gradient(180deg, var(--color-background) 0%, var(--color-surface-deep) 55%, #000000 100%);
     background-attachment: fixed;
-    background-size: 100% 100%;
+    background-size: 200% 200%, 100% 100%;
+    animation: page-gradient-drift 26s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page-gradient {
+      animation: none;
+    }
   }
 }
 
