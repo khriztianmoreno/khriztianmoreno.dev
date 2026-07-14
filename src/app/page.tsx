@@ -16,8 +16,8 @@ export default function Portfolio() {
       <HeroSection />
       <BioSection />
       <MilestonesSection />
-      <TimelineSection />
       <AwardsSection />
+      <TimelineSection />
       <BlogSection />
       <StackSection />
       <ClosingCTA />
