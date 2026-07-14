@@ -5,7 +5,7 @@ import { FOOTER_MENU, SOCIAL_PROFILES } from '../../common/assets/data';
 const Footer = () => {
   const year = new Date().getFullYear();
   return (
-    <footer className="bg-surface-muted">
+    <footer className="border-t border-white/5 text-on-surface-variant">
       <Container noGutter mobileGutter fullWidth>
         <div className="footer-wrapper flex items-center justify-between py-10">
           <div className="footer-copyright flex items-center">
@@ -13,16 +13,22 @@ const Footer = () => {
               href="https://www.linkedin.com/in/khriztianmoreno/"
               target="_blank"
               rel="noopener noreferrer"
+              className="font-mono text-xs uppercase tracking-widest text-on-surface-variant transition-colors hover:text-primary"
             >
               <span>@khriztianmoreno</span>
             </a>
-            <p className="m-0 ml-4">Copyright © {year}</p>
+            <p className="m-0 ml-4 font-mono text-xs uppercase tracking-widest">
+              Copyright © {year}
+            </p>
           </div>
 
           <ul className="footer-nav flex list-none m-0 p-0">
             {FOOTER_MENU.map((item) => (
               <li key={item.id} className="mx-4">
-                <a href={item.path} className="text-heading">
+                <a
+                  href={item.path}
+                  className="font-mono text-xs uppercase tracking-widest text-on-surface-variant transition-colors hover:text-primary"
+                >
                   {item.label}
                 </a>
               </li>

@@ -1,8 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+'use client';
 
+import { useEffect, useRef, useState } from 'react';
+
+import Badge from '../../common/Badge';
 import { useSfx } from '../../common/hooks/useSfx';
 import { addPool, mountFaceCanvas } from '../../common/hooks/usePoolFace';
-import Badge from '../../common/Badge';
 
 interface TaglineItem {
   rotation?: string;
@@ -13,7 +15,7 @@ interface TaglineItem {
   scale?: string;
 }
 
-export const taglines: TaglineItem[] = [
+const taglines: TaglineItem[] = [
   {
     rotation: '-9deg',
     size: '8.1vw',
@@ -31,7 +33,7 @@ export const taglines: TaglineItem[] = [
   {
     size: '8.9vw',
     'size-lg': '55px',
-    text: 'is an <span class="thumb-up"></span> speaker',
+    text: 'is an 👍 speaker',
   },
   {
     rotation: '-9deg',
@@ -46,7 +48,7 @@ interface CycleTaglineProps {
   clickHandler: () => void;
 }
 
-const CycleTagline = ({ clickHandler }: CycleTaglineProps) => {
+function CycleTagline({ clickHandler }: CycleTaglineProps) {
   const [active, setActive] = useState(false);
 
   const images: Record<'off' | 'on', string> = {
@@ -74,7 +76,7 @@ const CycleTagline = ({ clickHandler }: CycleTaglineProps) => {
       <span className="push-me">push me</span>
     </a>
   );
-};
+}
 
 function Hero() {
   const { playBoop } = useSfx();
@@ -108,19 +110,17 @@ function Hero() {
   }
 
   return (
-    <>
-      <section className="hero-wrapper" id="banner_section">
-        <h1 className="hero">
-          <Badge />
-          <span
-            ref={taglineRef}
-            className="hero-tagline"
-            dangerouslySetInnerHTML={{ __html: tagline?.text ?? '' }}
-          />
-        </h1>
-        <CycleTagline clickHandler={cycleTagline} />
-      </section>
-    </>
+    <section id="banner_section" className="hero-wrapper overflow-hidden">
+      <h1 className="hero">
+        <Badge />
+        <span
+          ref={taglineRef}
+          className="hero-tagline"
+          dangerouslySetInnerHTML={{ __html: tagline?.text ?? '' }}
+        />
+      </h1>
+      <CycleTagline clickHandler={cycleTagline} />
+    </section>
   );
 }
 

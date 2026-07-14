@@ -9,20 +9,20 @@ Co-organizes MedellinJS — Colombia's largest JavaScript community with 7,900+ 
 Believes in learn by doing: international talks, workshops, articles, and courses on AI-powered web development, performance engineering, and modern architecture.`;
 
 const Bio = () => (
-  <section id="me_bio" className="bg-green py-20">
+  <section id="me_bio" className="py-20">
     <Container noGutter mobileGutter fullWidth>
       <div className="mx-auto mb-15 max-w-136 text-center">
-        <h2 className="text-purple text-5xl font-bold leading-tight tracking-tight">
+        <h2 className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-5xl font-bold leading-tight tracking-tight text-transparent">
           Meet Khriztianmoreno!
         </h2>
       </div>
 
-      <div className="bio-content-wrapper flex items-center rounded-sm bg-white">
+      <div className="bio-content-wrapper glass-card flex items-center">
         <div className="bio-text-content">
-          <h2 className="text-heading mb-5 text-4xl font-bold leading-tight tracking-tight">
+          <h2 className="mb-5 text-4xl font-bold leading-tight tracking-tight text-on-surface">
             Full Stack AI Engineer &amp; Technical Evangelist
           </h2>
-          <p className="text-text mb-7 text-base leading-loose whitespace-pre-line">
+          <p className="mb-7 text-base leading-loose whitespace-pre-line text-on-surface-variant">
             {about}
           </p>
           <SocialProfile
@@ -46,9 +46,9 @@ const Bio = () => (
       .bio-content-wrapper { flex-wrap: nowrap; }
       .bio-text-content { flex: 1 1 0; min-width: 0; padding: 70px; }
       .bio-illustration { flex: 0 0 45%; }
-      .bio-text-content .bio_social a { color: #4b15c1; }
-      .bio-text-content .bio_social a:hover { color: #dd4a28; }
-      .bio-illustration img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 5px 5px 0; }
+      .bio-text-content .bio_social a { color: var(--color-on-surface-variant); }
+      .bio-text-content .bio_social a:hover { color: var(--color-primary); }
+      .bio-illustration img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 0 var(--radius-card) var(--radius-card) 0; filter: grayscale(0.2); }
       @media (max-width: 1200px) {
         .bio-text-content { padding: 27px; }
       }
@@ -56,7 +56,7 @@ const Bio = () => (
         .bio-content-wrapper { flex-wrap: wrap; flex-direction: column-reverse; max-width: 550px; margin: 0 auto; }
         .bio-text-content { flex: none; width: 100%; padding: 30px; }
         .bio-illustration { flex: none; width: 100%; max-height: 340px; overflow: hidden; }
-        .bio-illustration img { border-radius: 5px 5px 0 0; height: 340px; object-fit: cover; object-position: top center; }
+        .bio-illustration img { border-radius: var(--radius-card) var(--radius-card) 0 0; height: 340px; object-fit: cover; object-position: top center; }
         #me_bio { padding: 40px 0 60px; }
       }
       @media (max-width: 480px) {

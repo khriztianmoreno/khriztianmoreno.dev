@@ -1,4 +1,6 @@
-import { useState } from 'react';
+'use client';
+
+import { useEffect, useState } from 'react';
 
 import { MENU_ITEMS } from '../../common/assets/data';
 import Container from '../../common/UI/Container';
@@ -13,6 +15,22 @@ import LogoImageAlt from '../../common/assets/image/portfolio/logo-alt.png';
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        document.body.classList.add('sticky-nav-active');
+      } else {
+        document.body.classList.remove('sticky-nav-active');
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.body.classList.remove('sticky-nav-active');
+    };
+  }, []);
 
   return (
     <NavbarWrapper className="portfolio_navbar">
@@ -37,7 +55,7 @@ const Navbar = () => {
               <Drawer
                 open={drawerOpen}
                 onOpenChange={setDrawerOpen}
-                drawerHandler={<HamburgMenu className="text-green" />}
+                drawerHandler={<HamburgMenu className="text-primary" />}
               >
                 <ScrollSpyMenu
                   className="mobile_menu"

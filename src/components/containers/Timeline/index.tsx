@@ -21,11 +21,13 @@ const TimelineEntryDetails = ({ entry }: { entry: TimelineEntry }) => {
   if (entry.type === 'talk') {
     return (
       <>
-        <p className="m-0 text-sm font-semibold leading-snug text-heading">
+        <p className="m-0 text-sm font-semibold leading-snug text-on-surface">
           {entry.event}
         </p>
-        <p className="m-0 text-xs leading-snug text-text">{entry.location}</p>
-        <p className="m-0 text-xs leading-snug text-muted">
+        <p className="m-0 text-xs leading-snug text-on-surface-variant">
+          {entry.location}
+        </p>
+        <p className="m-0 text-xs leading-snug text-outline">
           {entry.format}
           {entry.attendance ? ` · ${entry.attendance.toLocaleString()} attendees` : ''}
         </p>
@@ -36,11 +38,13 @@ const TimelineEntryDetails = ({ entry }: { entry: TimelineEntry }) => {
   if (entry.type === 'workshop') {
     return (
       <>
-        <p className="m-0 text-sm font-semibold leading-snug text-heading">
+        <p className="m-0 text-sm font-semibold leading-snug text-on-surface">
           {entry.org}
         </p>
-        <p className="m-0 text-xs leading-normal text-text">{entry.description}</p>
-        <p className="m-0 text-xs leading-snug text-muted">
+        <p className="m-0 text-xs leading-normal text-on-surface-variant">
+          {entry.description}
+        </p>
+        <p className="m-0 text-xs leading-snug text-outline">
           {entry.format}
           {entry.attendance ? ` · ${entry.attendance.toLocaleString()} attendees` : ''}
         </p>
@@ -50,10 +54,12 @@ const TimelineEntryDetails = ({ entry }: { entry: TimelineEntry }) => {
 
   return (
     <>
-      <p className="m-0 text-xs font-semibold leading-snug uppercase tracking-wide text-muted">
+      <p className="m-0 text-xs font-semibold leading-snug uppercase tracking-wide text-outline">
         {entry.theme}
       </p>
-      <p className="m-0 text-xs leading-normal text-text">{entry.description}</p>
+      <p className="m-0 text-xs leading-normal text-on-surface-variant">
+        {entry.description}
+      </p>
     </>
   );
 };
@@ -61,14 +67,14 @@ const TimelineEntryDetails = ({ entry }: { entry: TimelineEntry }) => {
 const TimelineSection = () => (
   <section
     id="timeline_section"
-    className="timeline-section relative bg-surface py-38"
+    className="timeline-section relative py-38"
   >
     <Container noGutter mobileGutter fullWidth>
       <div className="timeline-header w-full mb-22">
-        <h2 className="text-heading mb-5 text-3xl font-semibold leading-snug">
+        <h2 className="mb-5 text-3xl font-semibold leading-snug text-on-surface">
           Talks, Workshops &amp; Writing
         </h2>
-        <p className="text-text m-0 text-base font-normal leading-normal">
+        <p className="m-0 text-base font-normal leading-normal text-on-surface-variant">
           A passport of international conferences, hands-on workshops, and technical
           articles shared across the JavaScript and AI web ecosystem.
         </p>
@@ -81,7 +87,7 @@ const TimelineSection = () => (
           return (
             <motion.div
               key={`timeline-item-${index}`}
-              className="timeline-stamp bg-white p-6"
+              className="timeline-stamp glass-card p-6"
               initial={stampVariants.initial}
               whileInView={stampVariants.whileInView}
               viewport={{ once: true, margin: '-60px' }}
@@ -91,20 +97,20 @@ const TimelineSection = () => (
                 <Icon size={22} className="text-primary" />
                 <span
                   className={`timeline-date text-xs uppercase tracking-widest ${
-                    entry.undated ? 'text-inactive-icon' : 'text-muted'
+                    entry.undated ? 'text-outline/60' : 'text-outline'
                   }`}
                 >
                   {entry.displayDate}
                 </span>
               </div>
 
-              <h3 className="m-0 mb-2 text-base font-semibold leading-snug text-heading">
+              <h3 className="m-0 mb-2 text-base font-semibold leading-snug text-on-surface">
                 {entry.type === 'post' ? (
                   <a
                     href={entry.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-heading hover:text-primary"
+                    className="text-on-surface hover:text-primary"
                   >
                     {entry.title}
                   </a>
@@ -123,15 +129,13 @@ const TimelineSection = () => (
     <style>{`
       .timeline-header { max-width: 50%; }
       .timeline-stamp {
-        border: 2px dashed var(--color-border);
-        border-radius: 6px;
         position: relative;
       }
       .timeline-stamp:nth-child(3n + 1) { transform: rotate(-1deg); }
       .timeline-stamp:nth-child(3n + 2) { transform: rotate(0.5deg); }
       .timeline-stamp:nth-child(3n) { transform: rotate(-0.5deg); }
       .timeline-date {
-        font-family: monospace;
+        font-family: var(--font-mono);
         letter-spacing: 0.12em;
       }
       @media (max-width: 1200px) { .timeline-section { padding: 110px 0; } }
