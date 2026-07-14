@@ -28,10 +28,10 @@ const AwardsSection = () => (
   >
     <Container noGutter mobileGutter fullWidth>
       <div className="awards-header w-full mb-22">
-        <h2 className="text-heading mb-5 text-3xl font-semibold leading-snug">
+        <h2 className="mb-5 text-3xl font-semibold leading-snug text-on-surface">
           Honorable Recognitions &amp; Awards
         </h2>
-        <p className="text-text m-0 text-base font-normal leading-normal">
+        <p className="m-0 text-base font-normal leading-normal text-on-surface-variant">
           Recognized by Google, Microsoft, Amazon Web Services, and Cloudinary for
           technical leadership and community impact across Latin America and beyond.
         </p>
@@ -45,7 +45,7 @@ const AwardsSection = () => (
       >
         {AWARDS.map((award, index) => (
           <GlideSlide key={`award-item-${index}`}>
-            <div className="award-item bg-white rounded-lg py-12 px-7.5">
+            <div className="award-item glass-card py-12 px-7.5">
               <div className="min-h-24">
                 <img
                   src={award.awardLogo?.src}
@@ -53,14 +53,14 @@ const AwardsSection = () => (
                   className="block mx-auto h-25 max-w-full mb-7.5"
                 />
               </div>
-              <h2 className="text-heading mb-4 text-xl font-semibold leading-snug text-center">
+              <h2 className="mb-4 text-xl font-semibold leading-snug text-center text-on-surface">
                 {award.awardName}
               </h2>
-              <p className="text-text m-0 text-base leading-normal text-center">
+              <p className="m-0 text-base leading-normal text-center text-on-surface-variant">
                 {award.awardDetails}
               </p>
               <div className="flex justify-center items-center mt-6">
-                <div className="mr-5 shrink-0">
+                <div className="mr-5 shrink-0 rounded-sm bg-white/90 p-1">
                   <img
                     src={award.awardeeLogo?.src}
                     alt={`awardee-logo-${index}`}
@@ -68,10 +68,10 @@ const AwardsSection = () => (
                   />
                 </div>
                 <div>
-                  <h2 className="mb-1 text-base font-semibold leading-snug text-muted">
+                  <h2 className="mb-1 text-base font-semibold leading-snug text-on-surface">
                     {award.awardeeName}
                   </h2>
-                  <p className="m-0 text-xs leading-snug text-muted">
+                  <p className="m-0 text-xs leading-snug text-on-surface-variant">
                     {award.date}
                   </p>
                 </div>
