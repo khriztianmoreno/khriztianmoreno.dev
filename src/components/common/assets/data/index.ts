@@ -107,7 +107,7 @@ export const MENU_ITEMS: MenuItem[] = [
   { label: 'START', path: '#banner_section', offset: '0' },
   { label: 'ME', path: '#me_bio', offset: '70' },
   { label: 'AWARDS', path: '#awards_section', offset: '0' },
-  { label: 'TIMELINE', path: '#timeline_section', offset: '0' },
+  { label: 'JOURNEY', path: '#milestones_section', offset: '0' },
 ];
 
 export interface AwardItem {

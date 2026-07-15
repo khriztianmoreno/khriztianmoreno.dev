@@ -2,7 +2,6 @@ import Navbar from '../components/containers/Navbar';
 import HeroSection from '../components/containers/Hero';
 import BioSection from '../components/containers/Bio';
 import MilestonesSection from '../components/containers/Milestones';
-import TimelineSection from '../components/containers/Timeline';
 import AwardsSection from '../components/containers/Awards';
 import BlogSection from '../components/containers/Blog';
 import StackSection from '../components/containers/Stack';
@@ -15,11 +14,10 @@ export default function Portfolio() {
       <Navbar />
       <HeroSection />
       <BioSection />
-      <MilestonesSection />
       <AwardsSection />
-      <TimelineSection />
       <BlogSection />
       <StackSection />
+      <MilestonesSection />
       <ClosingCTA />
       <Footer />
     </div>

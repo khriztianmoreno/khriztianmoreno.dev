@@ -366,7 +366,6 @@
   #banner_section { scroll-margin-top: 0; }
   #me_bio { scroll-margin-top: 90px; }
   #awards_section { scroll-margin-top: 0; }
-  #timeline_section { scroll-margin-top: 0; }
   #milestones_section { scroll-margin-top: 0; }
   #blog_section { scroll-margin-top: 0; }
   #stack_section { scroll-margin-top: 0; }
@@ -689,6 +688,50 @@
 
   @media (prefers-reduced-motion: reduce) {
     .page-gradient {
+      animation: none;
+    }
+  }
+
+  /* ─── Scroll rocket: rides the Journey timeline's center line, its
+     vertical position driven by that section's own scroll progress.
+     Purely decorative — hidden on mobile and frozen for reduced-motion
+     users. */
+  @keyframes scroll-rocket-sway {
+    0%, 100% { transform: translateX(-50%) rotate(150deg); }
+    50%      { transform: translateX(calc(-50% - 10px)) rotate(140deg); }
+  }
+
+  @keyframes scroll-rocket-flicker {
+    0%, 100%  { opacity: 0.6; transform: scale(0.85); }
+    50%       { opacity: 1; transform: scale(1.2); }
+  }
+
+  .scroll-rocket {
+    position: absolute;
+    left: 50%;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .scroll-rocket-icon {
+    display: block;
+    color: var(--color-primary);
+    filter: drop-shadow(0 0 10px rgba(0, 245, 155, 0.6));
+    animation: scroll-rocket-sway 5s ease-in-out infinite;
+  }
+
+  .scroll-rocket-flame {
+    position: absolute;
+    top: -6px;
+    right: 14px;
+    color: #ff8a3d;
+    filter: drop-shadow(0 0 6px rgba(255, 138, 61, 0.7));
+    animation: scroll-rocket-flicker 0.45s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-rocket-icon,
+    .scroll-rocket-flame {
       animation: none;
     }
   }
