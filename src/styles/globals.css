@@ -757,6 +757,31 @@
       animation: none;
     }
   }
+
+  /* ─── Tech constellation: neon-outline dev icons drifting either side of
+     the Journey timeline, styled like the scroll-rocket (currentColor +
+     drop-shadow glow). Purely decorative, desktop-only (see xl:block on the
+     wrapper), frozen for reduced-motion users. */
+  @keyframes constellation-float {
+    0%, 100% { transform: translateY(0); opacity: var(--star-min-opacity, 0.2); }
+    50%      { transform: translateY(-16px); opacity: var(--star-max-opacity, 0.5); }
+  }
+
+  .constellation-star {
+    position: absolute;
+    display: block;
+    filter: drop-shadow(0 0 var(--star-glow, 6px) currentColor);
+    animation-name: constellation-float;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .constellation-star {
+      animation: none;
+      opacity: 0.3;
+    }
+  }
 }
 
 @layer utilities {

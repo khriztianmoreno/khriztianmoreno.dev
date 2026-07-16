@@ -6,6 +6,7 @@ import { Flame, Rocket } from 'lucide-react';
 
 import FadeIn from '../../common/FadeIn';
 import { TIMELINE, type TimelineEntry } from '@/data/timeline';
+import TechConstellation from './TechConstellation';
 
 function getMeta(entry: TimelineEntry) {
   if (entry.type === 'workshop') {
@@ -171,6 +172,8 @@ const MilestonesSection = () => {
       </div>
 
       <div ref={containerRef} className="relative mx-auto max-w-4xl">
+        <TechConstellation />
+
         <div className="absolute left-1/2 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-white/10 to-transparent md:block" />
 
         <motion.div
