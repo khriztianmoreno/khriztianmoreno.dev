@@ -7,10 +7,11 @@ interface BaseEntry {
 
 export interface TalkEntry extends BaseEntry {
   type: 'talk';
-  event: string;
-  location: string;
-  format: string;
+  event?: string;
+  location?: string;
+  format?: string;
   attendance?: number;
+  description?: string;
 }
 
 export interface WorkshopEntry extends BaseEntry {
@@ -96,7 +97,8 @@ const TALKS: TalkEntry[] = [
   },
   {
     type: 'talk',
-    title: 'Un viaje a las Single Page Application a través de React y JavaScript',
+    title:
+      'Un viaje a las Single Page Application a través de React y JavaScript',
     event: 'Meetup MedellínJS',
     location: 'Colombia',
     format: 'Virtual',
@@ -129,9 +131,149 @@ const TALKS: TalkEntry[] = [
     event: 'Sesión de Arquitectura y Persistencia',
     location: 'Virtual',
     format: 'Virtual',
-    sortKey: 0,
-    undated: true,
-    displayDate: 'Date unavailable',
+    sortKey: 201805,
+    displayDate: 'May 2018',
+  },
+  {
+    type: 'talk',
+    title: 'CI & CD in javascript',
+    description:
+      'La integración continua (CI) es una práctica en la que un equipo de desarrolladores integra su código con anticipación y frecuencia a la rama principal. El despliegue continuo es la liberación del código a producción tan pronto esté listo.',
+    sortKey: 202410,
+    displayDate: 'Oct 2024',
+  },
+  {
+    type: 'talk',
+    title: 'Modern Frontend Developers',
+    description:
+      'Un viaje por las herramientas y tecnologías que potencian el camino para convertirse en un Modern Frontend Developer.',
+    sortKey: 202211,
+    displayDate: 'Nov 2022',
+  },
+  {
+    type: 'talk',
+    title: 'Serverless para Frontends',
+    description:
+      'Los desarrolladores front-end pueden hacer mucha magia en la web hoy en día, pero a veces todavía existe la necesidad de manejar algo de lógica del lado del servidor.',
+    sortKey: 202010,
+    displayDate: 'Oct 2020',
+  },
+  {
+    type: 'talk',
+    title: 'React Hooks 101',
+    description:
+      'React 16.3.x introdujo los Hooks, que reemplazan los life cycles de las versiones anteriores y hacen que React sea cada vez más funcional y fácil de testear.',
+    sortKey: 202007,
+    displayDate: 'Jul 2020',
+  },
+  {
+    type: 'talk',
+    title: 'Intro to Stackbit: Build a Custom JAMstack in Minutes',
+    description:
+      'Stackbit is a SaaS that allows developers of any level to build their own JAMstack sites, fast.',
+    sortKey: 202007,
+    displayDate: 'Jul 2020',
+  },
+  {
+    type: 'talk',
+    title: 'Headless CMS and Modern web development',
+    description:
+      'A headless CMS is a CMS that has had its "head" — the front-end delivery layer — removed, leaving only the back-end.',
+    sortKey: 202002,
+    displayDate: 'Feb 2020',
+  },
+  {
+    type: 'talk',
+    title: 'Pataconf',
+    sortKey: 201910,
+    displayDate: 'Oct 2019',
+  },
+  {
+    type: 'talk',
+    title: 'The JAMstack in 2019: Why (and How) to Get Started',
+    sortKey: 201909,
+    displayDate: 'Sep 2019',
+  },
+  {
+    type: 'talk',
+    title: 'Gatsby ⚛️',
+    description:
+      'Gatsby is a free and open source framework based on React that helps developers build blazing fast websites and apps.',
+    sortKey: 201908,
+    displayDate: 'Aug 2019',
+  },
+  {
+    type: 'talk',
+    title: 'GraphQL Query Language',
+    description:
+      'GraphQL is one of the most popular ways to create an API: the QL in GraphQL — the query language — is used to query data, change data with mutations, and listen for changes with subscriptions.',
+    sortKey: 201908,
+    displayDate: 'Aug 2019',
+  },
+  {
+    type: 'talk',
+    title: 'React Native 101',
+    description:
+      "React Native's architecture opened up many possibilities for re-inventing the clunkier aspects of UX construction on traditional platforms, making it faster to build world-class experiences.",
+    sortKey: 201905,
+    displayDate: 'May 2019',
+  },
+  {
+    type: 'talk',
+    title: 'Introduction to react-storybook',
+    description:
+      'A design system is a series of components that can be reused in different combinations.',
+    sortKey: 201905,
+    displayDate: 'May 2019',
+  },
+  {
+    type: 'talk',
+    title:
+      'Introducing JAMstack - What we talk about when we talk about modern web tools',
+    description:
+      "Today's static sites are anything but static — thanks to modern browsers, JavaScript, third-party APIs, and Markup.",
+    sortKey: 201905,
+    displayDate: 'May 2019',
+  },
+  {
+    type: 'talk',
+    title: 'GraphQL Apollo-Client Workshop',
+    description:
+      "GraphQL lets a client make specific, complex, and/or aggregate queries for data, and it's user-friendly to boot.",
+    sortKey: 201903,
+    displayDate: 'Mar 2019',
+  },
+  {
+    type: 'talk',
+    title: 'Reduce Redux Boilerplate with Redux-Actions',
+    description:
+      'The redux-actions library offers a small but powerful API to help cut down on the boilerplate typical of an application that uses Redux for state management.',
+    sortKey: 201902,
+    displayDate: 'Feb 2019',
+  },
+  {
+    type: 'talk',
+    title: 'Flux - Redux',
+    description:
+      'Una presentación corta acerca de la historia de Flux y Redux.',
+    sortKey: 201810,
+    displayDate: 'Oct 2018',
+  },
+  {
+    type: 'talk',
+    title: 'Build a Server-rendered ReactJS Application with Next.js',
+    description:
+      'A look at just how quickly Next.js makes the process of building server-rendered ReactJS applications.',
+    sortKey: 201809,
+    displayDate: 'Sep 2018',
+  },
+  {
+    type: 'talk',
+    title: 'NuxtJS',
+    description:
+      'A quick tour of the features of this framework to make server side rendering easy.',
+    sortKey: 201803,
+    displayDate: 'Mar 2018',
   },
 ];
 
@@ -252,7 +394,8 @@ const POSTS: PostEntry[] = [
   // 1. Inteligencia Artificial, Agentes y el Futuro de la Web (2024-2026)
   {
     type: 'post',
-    title: 'AI-Powered Web Debugging - From Browser Runtime to Autonomous Agent',
+    title:
+      'AI-Powered Web Debugging - From Browser Runtime to Autonomous Agent',
     theme: 'Inteligencia Artificial, Agentes y el Futuro de la Web',
     description:
       'Publicación técnica que explora el uso del Model Context Protocol (MCP) para conectar agentes de IA al motor de renderizado de Chrome, permitiendo la depuración autónoma en tiempo real de fugas de memoria, cuellos de botella de rendimiento y QA automatizado.',
@@ -262,7 +405,8 @@ const POSTS: PostEntry[] = [
   },
   {
     type: 'post',
-    title: 'The 15 Chrome Updates from Google I/O 2026 We Actually Need to Care About',
+    title:
+      'The 15 Chrome Updates from Google I/O 2026 We Actually Need to Care About',
     theme: 'Inteligencia Artificial, Agentes y el Futuro de la Web',
     description:
       'Guía práctica de novedades del ecosistema de Google I/O, destacando WebMCP, DevTools impulsados por IA, Gemini integrado nativamente en el cliente y APIs de navegación suave (Soft Navigations).',
@@ -292,7 +436,8 @@ const POSTS: PostEntry[] = [
   },
   {
     type: 'post',
-    title: 'Desbloquea tu creatividad con Google Gemini y JavaScript: Guía práctica',
+    title:
+      'Desbloquea tu creatividad con Google Gemini y JavaScript: Guía práctica',
     theme: 'Inteligencia Artificial, Agentes y el Futuro de la Web',
     description:
       'Tutorial exhaustivo paso a paso para la integración fluida de modelos generativos avanzados de IA de Google de manera local empleando JavaScript nativo.',
@@ -414,9 +559,9 @@ const POSTS: PostEntry[] = [
   },
 ];
 
-const ENTRIES: TimelineEntry[] = [...TALKS, ...WORKSHOPS, ...POSTS];
+const ENTRIES: TimelineEntry[] = [...TALKS, ...WORKSHOPS];
 
 // Descending by sortKey; "Sequelize 101" (sortKey: 0) naturally sorts last as the minimum value.
 export const TIMELINE: TimelineEntry[] = [...ENTRIES].sort(
-  (a, b) => b.sortKey - a.sortKey
+  (a, b) => b.sortKey - a.sortKey,
 );

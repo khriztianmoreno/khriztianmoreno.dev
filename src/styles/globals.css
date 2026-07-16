@@ -366,7 +366,6 @@
   #banner_section { scroll-margin-top: 0; }
   #me_bio { scroll-margin-top: 90px; }
   #awards_section { scroll-margin-top: 0; }
-  #timeline_section { scroll-margin-top: 0; }
   #milestones_section { scroll-margin-top: 0; }
   #blog_section { scroll-margin-top: 0; }
   #stack_section { scroll-margin-top: 0; }
@@ -548,6 +547,27 @@
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-card);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  /* ─── Milestone card: lights up as the scroll-rocket passes it ─── */
+  @keyframes milestone-card-pulse {
+    0%   { transform: translateX(0); }
+    30%  { transform: translateX(var(--pulse-x, 6px)); }
+    60%  { transform: translateX(calc(var(--pulse-x, 6px) * -0.4)); }
+    100% { transform: translateX(0); }
+  }
+
+  .milestone-card--active {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-neon);
+    animation: milestone-card-pulse 0.6s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .milestone-card--active {
+      animation: none;
+    }
   }
 
   .starlit-bg {
@@ -690,6 +710,76 @@
   @media (prefers-reduced-motion: reduce) {
     .page-gradient {
       animation: none;
+    }
+  }
+
+  /* ─── Scroll rocket: rides the Journey timeline's center line, its
+     vertical position driven by that section's own scroll progress.
+     Purely decorative — hidden on mobile and frozen for reduced-motion
+     users. */
+  @keyframes scroll-rocket-sway {
+    0%, 100% { transform: rotate(150deg); }
+    50%      { transform: rotate(140deg) translateX(-10px); }
+  }
+
+  @keyframes scroll-rocket-flicker {
+    0%, 100%  { opacity: 0.6; transform: scale(0.85); }
+    50%       { opacity: 1; transform: scale(1.2); }
+  }
+
+  .scroll-rocket {
+    position: absolute;
+    left: 50%;
+    z-index: 10;
+    pointer-events: none;
+    transform: translateX(-50%);
+  }
+
+  .scroll-rocket-icon {
+    display: block;
+    color: var(--color-primary);
+    filter: drop-shadow(0 0 10px rgba(0, 245, 155, 0.6));
+    animation: scroll-rocket-sway 5s ease-in-out infinite;
+  }
+
+  .scroll-rocket-flame {
+    position: absolute;
+    top: -6px;
+    right: 14px;
+    color: #ff8a3d;
+    filter: drop-shadow(0 0 6px rgba(255, 138, 61, 0.7));
+    animation: scroll-rocket-flicker 0.45s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-rocket-icon,
+    .scroll-rocket-flame {
+      animation: none;
+    }
+  }
+
+  /* ─── Tech constellation: neon-outline dev icons drifting either side of
+     the Journey timeline, styled like the scroll-rocket (currentColor +
+     drop-shadow glow). Purely decorative, desktop-only (see xl:block on the
+     wrapper), frozen for reduced-motion users. */
+  @keyframes constellation-float {
+    0%, 100% { transform: translateY(0); opacity: var(--star-min-opacity, 0.2); }
+    50%      { transform: translateY(-16px); opacity: var(--star-max-opacity, 0.5); }
+  }
+
+  .constellation-star {
+    position: absolute;
+    display: block;
+    filter: drop-shadow(0 0 var(--star-glow, 6px) currentColor);
+    animation-name: constellation-float;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .constellation-star {
+      animation: none;
+      opacity: 0.3;
     }
   }
 }
