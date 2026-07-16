@@ -1,8 +1,11 @@
-import FadeIn from '../../common/FadeIn';
-import { getBlogPosts } from '@/lib/blog';
+import Link from 'next/link';
 
-const BlogSection = async () => {
-  const posts = await getBlogPosts();
+import FadeIn from '../../common/FadeIn';
+import { postHref } from '@/components/blog/paths';
+import { getLatestPosts } from '@/lib/blog/posts';
+
+const BlogSection = () => {
+  const posts = getLatestPosts('en', 6);
 
   return (
     <section id="blog_section" className="relative px-6 py-30">
@@ -16,15 +19,13 @@ const BlogSection = async () => {
       {posts.length > 0 ? (
         <div className="mx-auto grid max-w-300 grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {posts.map((post, index) => (
-            <FadeIn key={post.url} delay={(index % 3) * 0.1}>
-              <a
-                href={post.url}
-                target="_blank"
-                rel="noopener noreferrer"
+            <FadeIn key={post.slug} delay={(index % 3) * 0.1}>
+              <Link
+                href={postHref('en', post.slug)}
                 className="glass-card block h-full p-8 transition-all hover:border-primary/40 hover:shadow-neon"
               >
                 <span className="mb-4 block font-mono text-xs uppercase tracking-widest text-primary">
-                  {post.displayDate}
+                  {post.date}
                 </span>
                 <h3 className="mb-3 text-lg font-bold leading-snug">
                   {post.title}
@@ -32,22 +33,13 @@ const BlogSection = async () => {
                 <p className="text-sm leading-relaxed text-on-surface-variant">
                   {post.description}
                 </p>
-              </a>
+              </Link>
             </FadeIn>
           ))}
         </div>
       ) : (
         <p className="mx-auto max-w-md text-center text-on-surface-variant">
-          New articles are on their way — check{' '}
-          <a
-            href="https://blog.khriztianmoreno.dev/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary underline"
-          >
-            the blog
-          </a>{' '}
-          directly in the meantime.
+          New articles are on their way — check back soon.
         </p>
       )}
     </section>

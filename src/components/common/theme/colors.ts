@@ -23,6 +23,11 @@ const colors = {
   onPrimary: '#003920',
   secondary: '#6024C1',
   onSecondary: '#ffffff',
+  // Lighter tint of `secondary` for foreground text/border use — see the
+  // matching comment in globals.css's @theme block (Theme Token Parity).
+  secondaryLight: '#a78bfa',
+  tertiary: '#ff7edb',
+  quaternary: '#7dd3fc',
   neonGreen: '#00F59B',
   electricPurple: '#6024C1',
   textMuted: 'rgba(255,255,255,0.7)',

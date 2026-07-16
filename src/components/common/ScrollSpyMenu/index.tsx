@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { type MenuItem } from '../assets/data';
 
 function useScrollSpy(sectionIds: string[]): string {
@@ -35,7 +37,26 @@ interface ScrollSpyMenuProps {
   onClose?: () => void;
 }
 
+/**
+ * Whether a static (non-anchor) menu item's route is the current page.
+ * Matches the item's path as a route prefix, not an exact string, so
+ * `/blog` stays highlighted on `/blog/[slug]`, `/blog/tags`, and their
+ * `/es/blog/...` mirrors — not just the exact index route.
+ */
+function isStaticLinkActive(pathname: string, path: string): boolean {
+  const localizedPath = `/es${path}`;
+  return (
+    pathname === path ||
+    pathname.startsWith(`${path}/`) ||
+    pathname === localizedPath ||
+    pathname.startsWith(`${localizedPath}/`)
+  );
+}
+
 const ScrollSpyMenu = ({ className = '', menuItems = [], onClose }: ScrollSpyMenuProps) => {
+  const pathname = usePathname();
+  const isHome = pathname === '/';
+
   const sectionIds = menuItems
     .filter((item) => !item.staticLink)
     .map((item) => item.path.slice(1));
@@ -43,6 +64,15 @@ const ScrollSpyMenu = ({ className = '', menuItems = [], onClose }: ScrollSpyMen
   const activeId = useScrollSpy(sectionIds);
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, path: string, offset = 0) => {
+    // Section anchors only exist on the home page. From any other route
+    // (e.g. /blog, /blog/[slug]) there's no matching element to scroll to,
+    // so navigate to the home page with the anchor instead of silently
+    // no-op'ing via a `document.getElementById` miss.
+    if (!isHome) {
+      onClose?.();
+      return;
+    }
+
     e.preventDefault();
     const id = path.slice(1);
     const el = document.getElementById(id);
@@ -50,7 +80,7 @@ const ScrollSpyMenu = ({ className = '', menuItems = [], onClose }: ScrollSpyMen
       const top = el.getBoundingClientRect().top + window.scrollY - offset;
       window.scrollTo({ top, behavior: 'smooth' });
     }
-    if (onClose) onClose();
+    onClose?.();
   };
 
   const classes = ['scrollspy__menu', className].filter(Boolean).join(' ');
@@ -61,30 +91,29 @@ const ScrollSpyMenu = ({ className = '', menuItems = [], onClose }: ScrollSpyMen
         <li
           key={`menu-item-${index}`}
           className={
-            !menu.staticLink && activeId === menu.path.slice(1) ? 'is-current' : ''
+            menu.staticLink
+              ? isStaticLinkActive(pathname, menu.path)
+                ? 'is-current'
+                : ''
+              : isHome && activeId === menu.path.slice(1)
+                ? 'is-current'
+                : ''
           }
         >
           {menu.staticLink ? (
-            <a href={menu.path}>{menu.label}</a>
+            <Link href={menu.path} onClick={onClose}>
+              {menu.label}
+            </Link>
           ) : (
-            <a
-              href={menu.path}
+            <Link
+              href={isHome ? menu.path : `/${menu.path}`}
               onClick={(e) => handleAnchorClick(e, menu.path, Number(menu.offset) || 0)}
             >
               {menu.label}
-            </a>
+            </Link>
           )}
         </li>
       ))}
-      <li>
-        <a
-          href="https://blog.khriztianmoreno.dev/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          BLOG
-        </a>
-      </li>
     </ul>
   );
 };

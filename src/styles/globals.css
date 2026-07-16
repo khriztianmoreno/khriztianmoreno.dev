@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
   /* Breakpoints */
@@ -21,6 +22,14 @@
   --color-on-primary: #003920;
   --color-secondary: #6024C1;
   --color-on-secondary: #ffffff;
+  /* Lighter tint of --color-secondary for use as foreground text/borders on
+     the dark background — the saturated #6024C1 reads well as a filled/solid
+     background but fails contrast as small text/border color against
+     --color-background (#120b1e). Used by post-body accents (H1 gradient,
+     blockquotes, alternating tag colors, TOC). */
+  --color-secondary-light: #a78bfa;
+  --color-tertiary: #ff7edb;
+  --color-quaternary: #7dd3fc;
   --color-neon-green: #00F59B;
   --color-electric-purple: #6024C1;
   --color-text-muted: rgba(255, 255, 255, 0.7);
@@ -781,6 +790,213 @@
       animation: none;
       opacity: 0.3;
     }
+  }
+
+  /* ─── Post body code blocks (rehype-pretty-code / Shiki) ───
+     rehype-pretty-code wraps every fenced code block in
+     `figure[data-rehype-pretty-code-figure] > pre > code`, with one
+     `span[data-line]` per source line. `PostBody`'s client-side effect
+     wraps each figure in a `.code-window` at mount, giving it a macOS-style
+     titlebar (traffic-light dots, language label, copy button) — this CSS
+     styles that wrapper as the glass card (matching `.glass-card` /
+     `prose-pre:glass-card`) instead of Shiki's own theme background
+     (disabled via `keepBackground: false` in src/lib/blog/markdown.ts), so
+     blocks read as part of the site's UI rather than a jarring rectangle
+     dropped from the theme. Long lines scroll horizontally within the pre
+     only — Astro's old `wrap: true` is replicated as a deliberate choice
+     for scroll-not-wrap, since wrapped long lines (URLs, long import
+     paths) are harder to read than a horizontally-scrollable block that
+     stays legible at its intended line length. Before JS hydrates,
+     `[data-rehype-pretty-code-figure]` alone still renders a legible (if
+     chrome-less) card — the titlebar is progressive enhancement, not load
+     bearing for readability. */
+  .prose [data-rehype-pretty-code-figure] {
+    /* !important: @tailwindcss/typography sets `.prose figure` margin via a
+       `:where()` selector (zero specificity) but in a cascade layer that
+       runs after this file's, so a plain override loses to it — this is
+       the only property that needs to win against the plugin's default. */
+    margin: 0 !important;
+    border-radius: var(--radius-card);
+    overflow-x: auto;
+    max-width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .prose [data-rehype-pretty-code-figure] pre {
+    margin: 0;
+    padding: 1.25rem;
+    overflow-x: auto;
+    max-width: 100%;
+    background: transparent;
+  }
+
+  .code-window {
+    margin: 1.75em 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .code-window [data-rehype-pretty-code-figure] {
+    margin: 0 !important;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .code-window-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .code-window-dots {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .code-window-dot {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 999px;
+  }
+
+  .code-window-dot-red {
+    background: #ff5f56;
+  }
+
+  .code-window-dot-yellow {
+    background: #ffbd2e;
+  }
+
+  .code-window-dot-green {
+    background: #27c93f;
+  }
+
+  .code-window-lang {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-quaternary);
+  }
+
+  .code-window-copy {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-on-surface-variant);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: calc(var(--radius-card) / 2);
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+  }
+
+  .code-window-copy:hover {
+    color: var(--color-on-surface);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .prose [data-rehype-pretty-code-figure] code {
+    display: grid;
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    line-height: 1.6;
+    background: transparent;
+    counter-reset: line;
+  }
+
+  .prose [data-rehype-pretty-code-figure] code [data-line] {
+    padding: 0 0.25rem;
+    white-space: pre;
+  }
+
+  /* Reset typography's default backtick decoration and padding on the
+     Shiki-highlighted `code` element — those belong to inline `code`, not
+     the highlighted block. */
+  .prose [data-rehype-pretty-code-figure] code::before,
+  .prose [data-rehype-pretty-code-figure] code::after {
+    content: none;
+  }
+
+  [data-rehype-pretty-code-title] {
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    color: var(--color-on-surface-variant);
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 0;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  [data-rehype-pretty-code-title] + pre {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  /* ─── Post body accents (approved TOC + color-accents mockup) ───
+     Blockquote gets a purple left-border "card" treatment instead of
+     typography's default styling; inline `code` (NOT rehype-pretty-code's
+     fenced blocks, styled above) uses the pink/tertiary accent instead of
+     flat primary-green so post bodies read with more of the site's neon
+     palette rather than a single accent color everywhere. */
+  .prose blockquote {
+    border-left: 3px solid var(--color-secondary-light);
+    background: rgba(167, 139, 250, 0.07);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    padding: 0.9em 1.3em;
+    font-style: normal;
+    color: var(--color-on-surface-variant);
+  }
+
+  .prose blockquote p {
+    margin: 0;
+  }
+
+  .prose :not(pre) > code {
+    background: rgba(255, 126, 219, 0.09);
+    border-radius: 5px;
+    padding: 0.15em 0.4em;
+  }
+
+  /* ─── Desktop table of contents (sticky sidebar, scroll-spy highlight) ───
+     Structural layout/positioning lives in TableOfContents.tsx as Tailwind
+     utilities; only the parts awkward to express as utilities (the
+     connecting rule down the left of the list, the active-item highlight)
+     live here. */
+  .post-toc ol {
+    border-left: 1px solid rgba(149, 141, 160, 0.35);
+  }
+
+  .post-toc a {
+    border-left: 2px solid transparent;
+    margin-left: -1px;
+  }
+
+  .post-toc li.is-active > a {
+    color: var(--color-primary);
+    border-left-color: var(--color-primary);
+    font-weight: 600;
   }
 }
 
