@@ -547,6 +547,27 @@
     -webkit-backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-card);
+    transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  /* ─── Milestone card: lights up as the scroll-rocket passes it ─── */
+  @keyframes milestone-card-pulse {
+    0%   { transform: translateX(0); }
+    30%  { transform: translateX(var(--pulse-x, 6px)); }
+    60%  { transform: translateX(calc(var(--pulse-x, 6px) * -0.4)); }
+    100% { transform: translateX(0); }
+  }
+
+  .milestone-card--active {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-neon);
+    animation: milestone-card-pulse 0.6s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .milestone-card--active {
+      animation: none;
+    }
   }
 
   .starlit-bg {
@@ -697,8 +718,8 @@
      Purely decorative — hidden on mobile and frozen for reduced-motion
      users. */
   @keyframes scroll-rocket-sway {
-    0%, 100% { transform: translateX(-50%) rotate(150deg); }
-    50%      { transform: translateX(calc(-50% - 10px)) rotate(140deg); }
+    0%, 100% { transform: rotate(150deg); }
+    50%      { transform: rotate(140deg) translateX(-10px); }
   }
 
   @keyframes scroll-rocket-flicker {
@@ -711,6 +732,7 @@
     left: 50%;
     z-index: 10;
     pointer-events: none;
+    transform: translateX(-50%);
   }
 
   .scroll-rocket-icon {

@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { Flame, Rocket } from 'lucide-react';
 
 import FadeIn from '../../common/FadeIn';
@@ -26,13 +26,131 @@ function getMeta(entry: TimelineEntry) {
   return { label: undefined, description: entry.description };
 }
 
+interface MilestoneCardProps {
+  entry: TimelineEntry;
+  isRight: boolean;
+  isActive: boolean;
+  delay: number;
+  dotRef: (el: HTMLDivElement | null) => void;
+}
+
+const MilestoneCard = ({
+  entry,
+  isRight,
+  isActive,
+  delay,
+  dotRef,
+}: MilestoneCardProps) => {
+  const { label, description } = getMeta(entry);
+
+  return (
+    <FadeIn
+      delay={delay}
+      className="relative mb-12 flex items-center justify-between last:mb-0 md:mb-24"
+    >
+      {!isRight && <div className="hidden w-5/12 md:block" />}
+
+      <div
+        ref={dotRef}
+        className="absolute left-1/2 hidden h-4 w-4 -translate-x-1/2 rounded-full bg-primary shadow-neon md:block"
+      />
+
+      <div
+        style={{ '--pulse-x': isRight ? '6px' : '-6px' } as React.CSSProperties}
+        className={`glass-card w-full p-8 md:w-5/12 ${isRight ? 'md:text-right' : ''} ${
+          isActive ? 'milestone-card--active' : ''
+        }`}
+      >
+        <span className="mb-2 block font-display text-2xl text-primary">
+          {entry.displayDate}
+        </span>
+        <h3 className="mb-3 text-xl font-bold">
+          {entry.type === 'post' ? (
+            <a
+              href={entry.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary"
+            >
+              {entry.title}
+            </a>
+          ) : (
+            entry.title
+          )}
+        </h3>
+        {(label || description) && (
+          <p className="text-on-surface-variant">
+            {label && (
+              <span className="font-semibold text-on-surface">{label}</span>
+            )}
+            {label && description && ' — '}
+            {description}
+          </p>
+        )}
+      </div>
+
+      {isRight && <div className="hidden w-5/12 md:block" />}
+    </FadeIn>
+  );
+};
+
 const MilestonesSection = () => {
-  const lineRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: lineRef,
-    offset: ['start start', 'end end'],
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dotRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Raw target tracks the viewport's center 1:1 with scroll; the spring
+  // lags gently behind it so the rocket reads as travelling the timeline
+  // instead of teleporting from dot to dot.
+  const rocketTop = useMotionValue(0);
+  const smoothRocketTop = useSpring(rocketTop, {
+    stiffness: 45,
+    damping: 20,
+    mass: 0.9,
   });
-  const rocketTop = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
+
+  useEffect(() => {
+    let rafId = 0;
+
+    const updateActive = () => {
+      const containerRect = containerRef.current?.getBoundingClientRect();
+      if (!containerRect) return;
+
+      const viewportCenter = window.innerHeight / 2;
+      rocketTop.set(viewportCenter - containerRect.top);
+
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+
+      dotRefs.current.forEach((dot, index) => {
+        if (!dot) return;
+        const rect = dot.getBoundingClientRect();
+        const dotCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(dotCenter - viewportCenter);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      setActiveIndex((prev) => (prev === closestIndex ? prev : closestIndex));
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(updateActive);
+    };
+
+    updateActive();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, [rocketTop]);
 
   return (
     <section
@@ -52,71 +170,30 @@ const MilestonesSection = () => {
         </p>
       </div>
 
-      <div ref={lineRef} className="relative mx-auto max-w-4xl">
+      <div ref={containerRef} className="relative mx-auto max-w-4xl">
         <div className="absolute left-1/2 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-white/10 to-transparent md:block" />
 
         <motion.div
           aria-hidden="true"
           className="scroll-rocket hidden md:block"
-          style={{ top: rocketTop }}
+          style={{ top: smoothRocketTop }}
         >
           <Flame className="scroll-rocket-flame" size={20} />
           <Rocket className="scroll-rocket-icon" size={30} />
         </motion.div>
 
-        {TIMELINE.map((entry, index) => {
-          const isRight = index % 2 === 1;
-          const { label, description } = getMeta(entry);
-
-          return (
-            <FadeIn
-              key={`${entry.type}-${entry.sortKey}-${entry.title}`}
-              delay={Math.min(index, 8) * 0.1}
-              className="relative mb-12 flex items-center justify-between last:mb-0 md:mb-24"
-            >
-              {!isRight && <div className="hidden w-5/12 md:block" />}
-
-              <div className="absolute left-1/2 hidden h-4 w-4 -translate-x-1/2 rounded-full bg-primary shadow-neon md:block" />
-
-              <div
-                className={`glass-card w-full p-8 md:w-5/12 ${
-                  isRight ? 'md:text-right' : ''
-                }`}
-              >
-                <span className="mb-2 block font-display text-2xl text-primary">
-                  {entry.displayDate}
-                </span>
-                <h3 className="mb-3 text-xl font-bold">
-                  {entry.type === 'post' ? (
-                    <a
-                      href={entry.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-primary"
-                    >
-                      {entry.title}
-                    </a>
-                  ) : (
-                    entry.title
-                  )}
-                </h3>
-                {(label || description) && (
-                  <p className="text-on-surface-variant">
-                    {label && (
-                      <span className="font-semibold text-on-surface">
-                        {label}
-                      </span>
-                    )}
-                    {label && description && ' — '}
-                    {description}
-                  </p>
-                )}
-              </div>
-
-              {isRight && <div className="hidden w-5/12 md:block" />}
-            </FadeIn>
-          );
-        })}
+        {TIMELINE.map((entry, index) => (
+          <MilestoneCard
+            key={`${entry.type}-${entry.sortKey}-${entry.title}`}
+            entry={entry}
+            isRight={index % 2 === 1}
+            isActive={index === activeIndex}
+            delay={Math.min(index, 8) * 0.1}
+            dotRef={(el) => {
+              dotRefs.current[index] = el;
+            }}
+          />
+        ))}
       </div>
     </section>
   );
