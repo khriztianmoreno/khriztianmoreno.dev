@@ -11,4 +11,14 @@ module.exports = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'blog.khriztianmoreno.dev' }],
+        destination: 'https://www.khriztianmoreno.dev/blog/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
