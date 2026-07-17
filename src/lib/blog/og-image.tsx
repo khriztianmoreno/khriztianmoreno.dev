@@ -1,6 +1,25 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
 import { ImageResponse } from 'next/og';
 
 import { formatDateForOg } from './date';
+
+/**
+ * The OG image route is statically generated (`generateStaticParams` in
+ * `src/app/blog/og/[slug]/route.tsx`), so this module only ever runs in
+ * Next's build-time Node.js process — `fs` is safe here, unlike in an Edge
+ * runtime request handler. Read once at module load and reused across
+ * every slug's `generateOgImage` call.
+ */
+const LOGO_BASE64 = (() => {
+  const logoPath = path.join(
+    process.cwd(),
+    'src/components/common/assets/image/portfolio/logo.png'
+  );
+  const buffer = fs.readFileSync(logoPath);
+  return `data:image/png;base64,${buffer.toString('base64')}`;
+})();
 
 export interface OgImageOptions {
   title: string;
@@ -73,13 +92,21 @@ export async function generateOgImage({
           style={{
             display: 'flex',
             alignItems: 'center',
-            fontSize: '28px',
-            fontWeight: 800,
-            color: colors.primary,
-            letterSpacing: '-0.5px',
+            gap: '14px',
           }}
         >
-          khriztianmoreno
+          <img src={LOGO_BASE64} width={48} height={48} alt="" />
+          <div
+            style={{
+              display: 'flex',
+              fontSize: '28px',
+              fontWeight: 800,
+              color: colors.primary,
+              letterSpacing: '-0.5px',
+            }}
+          >
+            khriztianmoreno
+          </div>
         </div>
 
         {/* Main content - Title */}
@@ -151,11 +178,14 @@ export async function generateOgImage({
           <div
             style={{
               display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
               fontSize: '16px',
               fontWeight: 700,
               color: colors.onSurfaceVariant,
             }}
           >
+            <img src={LOGO_BASE64} width={24} height={24} alt="" />
             khriztianmoreno.dev
           </div>
           <div
