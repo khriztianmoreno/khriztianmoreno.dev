@@ -8,7 +8,7 @@ type BadgeProps = Omit<ImageProps, 'src' | 'alt'> & {
 };
 
 function Badge({
-  alt = 'Khriztian Moreno — JS Developer Advocate & Community builder',
+  alt = 'Khriztian Moreno — Full Stack Developer & Community builder',
   ...props
 }: BadgeProps) {
   return (

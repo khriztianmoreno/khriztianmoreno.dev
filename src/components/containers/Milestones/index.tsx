@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { Flame, Rocket } from 'lucide-react';
+import Link from 'next/link';
 
 import FadeIn from '../../common/FadeIn';
 import { TIMELINE, type TimelineEntry } from '@/data/timeline';
@@ -67,14 +68,9 @@ const MilestoneCard = ({
         </span>
         <h3 className="mb-3 text-xl font-bold">
           {entry.type === 'post' ? (
-            <a
-              href={entry.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-primary"
-            >
+            <Link href={entry.url} className="hover:text-primary">
               {entry.title}
-            </a>
+            </Link>
           ) : (
             entry.title
           )}

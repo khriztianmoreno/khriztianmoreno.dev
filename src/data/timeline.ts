@@ -1,3 +1,5 @@
+import { postHref } from '@/components/blog/paths';
+
 interface BaseEntry {
   title: string;
   sortKey: number;
@@ -399,7 +401,7 @@ const POSTS: PostEntry[] = [
     theme: 'Inteligencia Artificial, Agentes y el Futuro de la Web',
     description:
       'Publicación técnica que explora el uso del Model Context Protocol (MCP) para conectar agentes de IA al motor de renderizado de Chrome, permitiendo la depuración autónoma en tiempo real de fugas de memoria, cuellos de botella de rendimiento y QA automatizado.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref('en', 'ai-powered-web-debugging'),
     sortKey: 202605,
     displayDate: 'May 2026',
   },
@@ -410,7 +412,7 @@ const POSTS: PostEntry[] = [
     theme: 'Inteligencia Artificial, Agentes y el Futuro de la Web',
     description:
       'Guía práctica de novedades del ecosistema de Google I/O, destacando WebMCP, DevTools impulsados por IA, Gemini integrado nativamente en el cliente y APIs de navegación suave (Soft Navigations).',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref('en', '15-updates-from-google-io-2026'),
     sortKey: 202605,
     displayDate: 'May 2026',
   },
@@ -420,7 +422,7 @@ const POSTS: PostEntry[] = [
     theme: 'Inteligencia Artificial, Agentes y el Futuro de la Web',
     description:
       'Análisis arquitectónico del framework ADK para simplificar la creación de agentes autónomos inteligentes, detallando sus seis componentes clave: agente, ejecutor (runner), sesión, estado, memoria y herramientas personalizadas con MCP.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref('en', 'the-agent-development-kit-adk'),
     sortKey: 202510,
     displayDate: 'Oct 2025',
   },
@@ -430,7 +432,7 @@ const POSTS: PostEntry[] = [
     theme: 'Inteligencia Artificial, Agentes y el Futuro de la Web',
     description:
       'Introducción de corte técnico para el uso práctico de Prompt API, permitiendo a los desarrolladores web ejecutar modelos de lenguaje integrados en el navegador (como Gemini Nano) sin latencia del servidor ni costes de infraestructura de APIs tradicionales.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref('en', 'the-revolutionary-prompt-api'),
     sortKey: 202508,
     displayDate: 'Aug 2025',
   },
@@ -441,7 +443,10 @@ const POSTS: PostEntry[] = [
     theme: 'Inteligencia Artificial, Agentes y el Futuro de la Web',
     description:
       'Tutorial exhaustivo paso a paso para la integración fluida de modelos generativos avanzados de IA de Google de manera local empleando JavaScript nativo.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref(
+      'en',
+      'unlock-your-creativity-with-google-gemini-and-javascript-a-practical-guide'
+    ),
     sortKey: 202403,
     displayDate: 'Mar 2024',
   },
@@ -452,7 +457,7 @@ const POSTS: PostEntry[] = [
     theme: 'Rendimiento Web y Optimización Profesional de Interfaces',
     description:
       'Guía avanzada para ingenieros frontend sénior sobre cómo diagnosticar rigurosamente métricas complejas de Core Web Vitals, concentrándose en la detección de retrasos en Interaction to Next Paint (INP), Largest Contentful Paint (LCP) y Cumulative Layout Shift (CLS).',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref('en', 'mastering-chrome-devtools-for-web-performance-optimization'),
     sortKey: 202511,
     displayDate: 'Nov 2025',
   },
@@ -462,7 +467,13 @@ const POSTS: PostEntry[] = [
     theme: 'Rendimiento Web y Optimización Profesional de Interfaces',
     description:
       'Serie de guías detalladas para analizar datos de campo reales de usuarios (CrUX) y optimizar la carga a través del hilo principal, estabilidad visual de maquetado y optimización de recursos multimedia.',
-    url: 'https://blog.khriztianmoreno.dev',
+    // This entry describes a two-post series; linked to the first
+    // ("Demystifying...") since a single PostEntry only carries one url —
+    // the second is "optimizing-for-speed-practical-strategies-to-improve-your-core-web-vitals".
+    url: postHref(
+      'en',
+      "demystifying-core-web-vitals:-a-developer's-guide-to-lcp-inp-and-cls"
+    ),
     sortKey: 202510,
     displayDate: 'Oct-Nov 2025',
   },
@@ -472,7 +483,10 @@ const POSTS: PostEntry[] = [
     theme: 'Rendimiento Web y Optimización Profesional de Interfaces',
     description:
       'Explicación del funcionamiento de la nueva API de Soft Navigations de Chrome orientada a estandarizar y reportar correctamente las mediciones de rendimiento en el ciclo de vida de aplicaciones de una sola página.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref(
+      'en',
+      'navigating-the-future-understanding-and-measuring-soft-navigations-for-spas'
+    ),
     sortKey: 202511,
     displayDate: 'Nov 2025',
   },
@@ -482,7 +496,10 @@ const POSTS: PostEntry[] = [
     theme: 'Rendimiento Web y Optimización Profesional de Interfaces',
     description:
       'Análisis de rendimiento del motor de renderizado de CSS de los navegadores modernos, discutiendo el coste de propiedades específicas, el uso eficiente de Container Queries, Subgrid, pseudo-clases dinámicas (:has()) y propiedades personalizadas para diseño a escala.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref(
+      'en',
+      'beyond-the-basics:-advanced-css-techniques-for-web-developers'
+    ),
     sortKey: 202509,
     displayDate: 'Sep 2025',
   },
@@ -492,7 +509,10 @@ const POSTS: PostEntry[] = [
     theme: 'Rendimiento Web y Optimización Profesional de Interfaces',
     description:
       'Estrategias de encapsulamiento del Shadow DOM, elementos personalizados y tokens de diseño avanzados con Lit para crear microfrontends interoperables y escalables.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref(
+      'en',
+      'web-components-and-material-design:-a-powerful-duo-for-modern-web-development'
+    ),
     sortKey: 202509,
     displayDate: 'Sep 2025',
   },
@@ -503,7 +523,7 @@ const POSTS: PostEntry[] = [
     theme: 'Arquitectura de Software y Ecosistema Moderno de JS',
     description:
       'Análisis de tendencias dominadas por APIs nativas de Fugu/PWA, autenticación sin contraseñas (Passkeys / FedCM), APIs de IA integradas y arquitecturas que minimizan el excesivo envío de JavaScript innecesario al cliente.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref('en', 'the-web-stack-you-cannot-ignore-in-2026'),
     sortKey: 202512,
     displayDate: 'Dec 2025',
   },
@@ -513,7 +533,7 @@ const POSTS: PostEntry[] = [
     theme: 'Arquitectura de Software y Ecosistema Moderno de JS',
     description:
       'Manual pragmático de los doce principios metodológicos para el diseño de aplicaciones modernas de software como servicio (SaaS) altamente escalables, portables y listas para integraciones Cloud continuas.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref('en', 'what-is-a-12-factor-app-a-quick-guide'),
     sortKey: 202501,
     displayDate: 'Jan 2025',
   },
@@ -523,7 +543,7 @@ const POSTS: PostEntry[] = [
     theme: 'Arquitectura de Software y Ecosistema Moderno de JS',
     description:
       'Evaluación de balances de ingeniería para decidir el stack ideal de desarrollo web fullstack rápido y mantenible en la escena actual de producción.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref('en', 'tech-stack-2025'),
     sortKey: 202501,
     displayDate: 'Jan 2025',
   },
@@ -533,7 +553,7 @@ const POSTS: PostEntry[] = [
     theme: 'Arquitectura de Software y Ecosistema Moderno de JS',
     description:
       'Explicación técnica de Rspack v1.0, el empaquetador veloz escrito en Rust, compatible con el ecosistema de plugins de webpack y diseñado para acelerar de forma drástica los tiempos de compilación de aplicaciones monolíticas en entornos empresariales.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref('en', 'rust-is-revolutionizing-javascript-development'),
     sortKey: 202409,
     displayDate: 'Sep 2024',
   },
@@ -543,7 +563,7 @@ const POSTS: PostEntry[] = [
     theme: 'Arquitectura de Software y Ecosistema Moderno de JS',
     description:
       'Discusión analítica sobre la gestión de estado y el balance de renderizado entre cliente y servidor en arquitecturas modernas de React.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref('en', 'server-components-vs-server-side-rendering'),
     sortKey: 202401,
     displayDate: 'Jan 2024',
   },
@@ -553,7 +573,10 @@ const POSTS: PostEntry[] = [
     theme: 'Arquitectura de Software y Ecosistema Moderno de JS',
     description:
       'Reseña e implicaciones técnicas del lanzamiento de bolt.new de StackBlitz, un sandbox de desarrollo potenciado por IA que corre de manera nativa Node.js en el cliente gracias a WebAssembly.',
-    url: 'https://blog.khriztianmoreno.dev',
+    url: postHref(
+      'en',
+      'webcontainers-at-its-best-bolt-new-combines-ai-and-full-stack-development-in-the-browser'
+    ),
     sortKey: 202410,
     displayDate: 'Oct 2024',
   },

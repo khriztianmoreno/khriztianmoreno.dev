@@ -13,7 +13,15 @@ import ScrollSpyMenu from '../../common/ScrollSpyMenu';
 import LogoImage from '../../common/assets/image/portfolio/logo.png';
 import LogoImageAlt from '../../common/assets/image/portfolio/logo-alt.png';
 
-const Navbar = () => {
+interface NavbarProps {
+  /** Optional slot rendered at the far right of the bar, next to the
+   * hamburger button — used by the blog layout for the language switcher.
+   * Kept out of the shared `MENU_ITEMS`/`ScrollSpyMenu` since it doesn't
+   * apply to the rest of the (English-only) site. */
+  children?: React.ReactNode;
+}
+
+const Navbar = ({ children }: NavbarProps) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
@@ -37,19 +45,19 @@ const Navbar = () => {
       <Container noGutter mobileGutter fullWidth>
         <div className="flex items-center justify-between w-full">
           <Logo
-            href="#"
+            href="/"
             logoSrc={LogoImage?.src}
             title="Portfolio"
             className="main-logo"
           />
           <Logo
-            href="#"
+            href="/"
             logoSrc={LogoImageAlt?.src}
             title="Portfolio"
             className="logo-alt"
           />
 
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
             <ScrollSpyMenu className="main_menu" menuItems={MENU_ITEMS} />
             <div className="hamburger-btn">
               <Drawer
@@ -64,6 +72,7 @@ const Navbar = () => {
                 />
               </Drawer>
             </div>
+            {children}
           </div>
         </div>
       </Container>

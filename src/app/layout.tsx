@@ -4,12 +4,30 @@ import Providers from './providers';
 import '../components/common/assets/css/flaticon.css';
 import '../styles/globals.css';
 
+/**
+ * On Vercel, `VERCEL_URL` is the current deployment's own host (preview or
+ * production) and `VERCEL_ENV` tells us which kind. Hardcoding
+ * `metadataBase` to the production domain broke relative Open Graph/Twitter
+ * image URLs (e.g. `/blog/og/[slug]`) on preview deployments — they'd
+ * resolve against `khriztianmoreno.dev`, which doesn't have that deploy's
+ * content, so social scrapers got a 404 for the image while the page's own
+ * title/description (read directly off the shared preview URL) still
+ * worked. Falling back to `VERCEL_URL` makes preview deployments
+ * self-referencing; production still resolves to the canonical domain.
+ */
+const SITE_URL =
+  process.env.VERCEL_ENV === 'production'
+    ? 'https://khriztianmoreno.dev'
+    : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000';
+
 export const metadata: Metadata = {
   title:
     'Khriztian Moreno — Full Stack AI Engineer & Technical Evangelist 👨🏼‍💻🇨🇴',
   description:
     'Full Stack AI Engineer, Google Developer Expert, and community leader from Medellín, Colombia. 15+ years building scalable web architectures at MercadoLibre, Globant, and more. Speaker, educator, and open-source contributor.',
-  metadataBase: new URL('https://khriztianmoreno.dev'),
+  metadataBase: new URL(SITE_URL),
   openGraph: {
     type: 'website',
     url: 'https://khriztianmoreno.dev/',
