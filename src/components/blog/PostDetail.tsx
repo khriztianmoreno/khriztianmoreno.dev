@@ -6,6 +6,7 @@ import Heading from '@/components/common/Heading';
 import { type Lang, type Post } from '@/lib/blog/schema';
 import { getFormattedDate } from '@/lib/blog/date';
 import { renderMarkdown } from '@/lib/blog/markdown';
+import Comments from './Comments';
 import { getBlogTranslations } from './i18n';
 import { blogIndexHref, tagHref } from './paths';
 import PostBody from './PostBody';
@@ -75,6 +76,7 @@ const PostDetail = async ({ lang, post }: PostDetailProps) => {
               html={html}
               className="prose prose-invert max-w-200 prose-headings:font-display prose-a:text-primary prose-code:text-tertiary prose-pre:glass-card"
             />
+            <Comments lang={lang} />
           </FadeIn>
 
           <TableOfContents headings={headings} eyebrow={t('tableOfContents')} />
