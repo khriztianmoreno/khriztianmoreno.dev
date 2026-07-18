@@ -21,6 +21,7 @@ const SocialProfile = ({ items = [], className = '', iconSize = 22 }: SocialProf
               target="_blank"
               rel="noopener noreferrer"
               aria-label="social icon"
+              data-umami-event={`social-${item.name}-click`}
             >
               <Icon />
             </a>

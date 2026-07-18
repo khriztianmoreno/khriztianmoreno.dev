@@ -13,6 +13,7 @@ const Footer = () => {
               href="https://www.linkedin.com/in/khriztianmoreno/"
               target="_blank"
               rel="noopener noreferrer"
+              data-umami-event="social-linkedin-click"
               className="font-mono text-xs uppercase tracking-widest text-on-surface-variant transition-colors hover:text-primary"
             >
               <span>@khriztianmoreno</span>

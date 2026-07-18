@@ -18,6 +18,7 @@ const ClosingCTA = () => (
             href="https://sessionize.com/khriztianmoreno/"
             target="_blank"
             rel="noopener noreferrer"
+            data-umami-event="book-speaking-click"
             className="inline-block rounded-full bg-primary px-10 py-5 text-xl font-bold text-on-primary transition-transform hover:scale-105 hover:shadow-neon"
           >
             Book for Speaking
@@ -28,6 +29,7 @@ const ClosingCTA = () => (
             href="https://www.linkedin.com/in/khriztianmoreno/"
             target="_blank"
             rel="noopener noreferrer"
+            data-umami-event="get-in-touch-click"
             className="inline-block rounded-full border border-primary/40 px-10 py-5 text-xl font-bold text-primary transition-colors hover:border-primary"
           >
             Get In Touch

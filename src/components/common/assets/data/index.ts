@@ -85,15 +85,16 @@ const SvgFacebook: FC = () =>
 export interface SocialProfileItem {
   icon: FC;
   url: string;
+  name: string;
 }
 
 export const SOCIAL_PROFILES: SocialProfileItem[] = [
-  { icon: SvgLinkedin, url: 'https://www.linkedin.com/in/khriztianmoreno/' },
-  { icon: SvgGithub, url: 'https://github.com/khriztianmoreno' },
-  { icon: SvgTwitter, url: 'https://twitter.com/khriztianmoreno' },
-  { icon: SvgYoutube, url: 'https://www.youtube.com/khriztianmoreno' },
-  { icon: SvgInstagram, url: 'https://www.instagram.com/khriztianmoreno' },
-  { icon: SvgFacebook, url: 'https://www.facebook.com/khriztianmoreno' },
+  { icon: SvgLinkedin, url: 'https://www.linkedin.com/in/khriztianmoreno/', name: 'linkedin' },
+  { icon: SvgGithub, url: 'https://github.com/khriztianmoreno', name: 'github' },
+  { icon: SvgTwitter, url: 'https://twitter.com/khriztianmoreno', name: 'twitter' },
+  { icon: SvgYoutube, url: 'https://www.youtube.com/khriztianmoreno', name: 'youtube' },
+  { icon: SvgInstagram, url: 'https://www.instagram.com/khriztianmoreno', name: 'instagram' },
+  { icon: SvgFacebook, url: 'https://www.facebook.com/khriztianmoreno', name: 'facebook' },
 ];
 
 export interface MenuItem {
