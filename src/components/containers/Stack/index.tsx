@@ -1,4 +1,5 @@
 import FadeIn from '../../common/FadeIn';
+import { getAccentClass } from '@/lib/accentColor';
 
 interface StackCategory {
   label: string;
@@ -72,7 +73,9 @@ const StackSection = () => (
             {category.items.map((item) => (
               <span
                 key={item}
-                className="rounded-sm border border-secondary/20 bg-secondary/10 px-3 py-1 font-mono text-xs text-secondary"
+                className={`rounded-sm border px-3 py-1 font-mono text-xs ${getAccentClass(
+                  item
+                )}`}
               >
                 {item}
               </span>
