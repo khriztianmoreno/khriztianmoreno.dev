@@ -1,4 +1,5 @@
 import { type Metadata } from 'next';
+import Script from 'next/script';
 import Providers from './providers';
 
 import '../components/common/assets/css/flaticon.css';
@@ -64,6 +65,13 @@ export default function RootLayout({
       </head>
       <body className="page-gradient text-on-surface">
         <Providers>{children}</Providers>
+        {process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <Script
+            src="https://umami.khriztianmoreno.cloud/script.js"
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );
