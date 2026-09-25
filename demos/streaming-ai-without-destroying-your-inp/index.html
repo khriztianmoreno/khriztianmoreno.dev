@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Streaming AI without destroying your INP — demo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Streaming AI without destroying your INP</h1>
+      <p>
+        Companion demo for
+        <a href="https://www.khriztianmoreno.dev/blog/streaming-ai-without-destroying-your-inp">the blog post</a>.
+        Requires a Chrome build with the on-device Prompt API — see
+        <a href="./README.md">README.md</a> for setup.
+      </p>
+      <p id="warning" hidden>
+        <code>LanguageModel</code> is not available in this browser. Enable
+        <code>chrome://flags/#prompt-api-for-gemini-nano</code> and restart Chrome, then reload this page.
+      </p>
+    </header>
+
+    <main>
+      <section class="controls">
+        <label for="prompt">Prompt</label>
+        <textarea id="prompt">Write a long, detailed explanation of how photosynthesis works, in Spanish.</textarea>
+
+        <fieldset>
+          <legend>Strategy</legend>
+          <label><input type="radio" name="strategy" value="naive" checked /> Naive (per-chunk, no yield)</label>
+          <br />
+          <label><input type="radio" name="strategy" value="optimized" /> Optimized (sentence batching + yield)</label>
+        </fieldset>
+
+        <div class="actions">
+          <button id="generate">Generate</button>
+          <button id="stop" disabled>Stop</button>
+          <button id="probe">🔘 Click me while it's generating</button>
+        </div>
+      </section>
+
+      <section class="output">
+        <h2>Model output</h2>
+        <div id="answer" aria-live="polite"></div>
+      </section>
+
+      <section class="metrics">
+        <h2>INP log</h2>
+        <p>
+          Every interaction on this page (including clicks on “probe”) reports here via
+          <a href="https://github.com/GoogleChrome/web-vitals">web-vitals</a>'
+          <code>onINP</code>. Compare the values between strategies — then open DevTools →
+          Performance for the full trace.
+        </p>
+        <ul id="inp-log"></ul>
+      </section>
+    </main>
+
+    <script type="module" src="metrics.js"></script>
+    <script type="module" src="main.js"></script>
+  </body>
+</html>

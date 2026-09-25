@@ -1,0 +1,59 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  line-height: 1.5;
+}
+
+textarea {
+  width: 100%;
+  min-height: 4rem;
+  font: inherit;
+}
+
+fieldset {
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.output {
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  min-height: 6rem;
+}
+
+#warning {
+  background: #fef3c7;
+  color: #78350f;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+#inp-log {
+  list-style: none;
+  padding: 0;
+  font-family: ui-monospace, monospace;
+  font-size: 0.9rem;
+}
+
+.inp-good {
+  color: #15803d;
+}
+
+.inp-poor {
+  color: #b91c1c;
+  font-weight: 600;
+}
