@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Offline-first AI: IndexedDB as Gemini Nano's memory — demo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <h1>FieldTech Zero — offline incident logger</h1>
+      <p>
+        Companion demo for
+        <a href="https://www.khriztianmoreno.dev/blog/offline-first-ai-indexeddb-gemini-nano">the blog post</a>.
+        Requires a Chrome build with the on-device Prompt API — see <a href="./README.md">README.md</a>.
+      </p>
+      <p id="warning" hidden>
+        <code>LanguageModel</code> is not available in this browser. Enable
+        <code>chrome://flags/#prompt-api</code> and restart Chrome, then reload this page.
+      </p>
+    </header>
+
+    <main>
+      <section class="controls">
+        <label for="note">Raw field note</label>
+        <textarea id="note">
+Auxiliary pump 3 leaking slightly at the perimeter seal, sensor reading 4.2 bar, needs replacement within 48h.</textarea
+        >
+
+        <label><input type="checkbox" id="pretend-offline" /> Pretend offline (skip cloud fallback)</label>
+
+        <div class="actions">
+          <button id="process">Process note</button>
+          <button id="reset">Clear session</button>
+        </div>
+
+        <p id="status" aria-live="polite"></p>
+      </section>
+
+      <section class="output">
+        <h2>Structured report <span id="source-badge" class="badge" hidden></span></h2>
+        <pre id="report"></pre>
+      </section>
+
+      <section class="history">
+        <h2>Session history (from IndexedDB)</h2>
+        <p>Reload this page — history is restored into <code>initialPrompts</code> without touching the network.</p>
+        <ul id="history"></ul>
+      </section>
+    </main>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  line-height: 1.5;
+}
+
+textarea {
+  width: 100%;
+  min-height: 4.5rem;
+  font: inherit;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.output,
+.history {
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+#warning {
+  background: #fef3c7;
+  color: #78350f;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.badge-cache {
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+
+.badge-nano {
+  background: #dcfce7;
+  color: #14532d;
+}
+
+.badge-cloud {
+  background: #fce7f3;
+  color: #831843;
+}
+
+#history {
+  list-style: none;
+  padding: 0;
+  font-family: ui-monospace, monospace;
+  font-size: 0.85rem;
+}

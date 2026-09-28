@@ -22,8 +22,8 @@ This uses native ES modules and the on-device Prompt API, so:
    ```
 
 2. Open it in a recent desktop Chrome with the Prompt API available. If `LanguageModel` isn't defined (the page will tell you), enable it:
-   - `chrome://flags/#prompt-api-for-gemini-nano` → **Enabled**
-   - `chrome://components` → check for updates on **Optimization Guide On Device Model**
+   - `chrome://flags/#prompt-api` → the **Prompt API** flag → **Enabled**
+   - `chrome://components` → find the **Optimization Guide** entries (e.g. "Optimization Guide On Device Models Manifest") and hit "Check for update" on them
    - Restart Chrome.
 
    See Chrome's [Prompt API guide](https://developer.chrome.com/docs/ai/prompt-api) if the model doesn't download.
