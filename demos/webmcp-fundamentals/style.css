@@ -1,0 +1,93 @@
+/* Tailwind (browser CDN) does the heavy lifting; this is only what's awkward to inline. */
+
+:root {
+  color-scheme: light dark;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.metrics > div {
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: color-mix(in oklab, currentColor 5%, transparent);
+}
+
+.metrics dt {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.metrics dd {
+  font: 600 1.1rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.run-btn {
+  width: 100%;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+}
+
+.run-btn:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+.log {
+  margin-top: 1rem;
+  max-height: 18rem;
+  overflow: auto;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background: color-mix(in oklab, currentColor 4%, transparent);
+  font: 0.75rem/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.log:empty::before {
+  content: 'Waiting for a run…';
+  opacity: 0.5;
+}
+
+.log-line {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: 0 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+.log-tag {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  line-height: 1.85;
+}
+
+.log-json > details {
+  grid-column: 2;
+}
+
+.log-json summary {
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.log-json pre {
+  margin: 0.25rem 0 0.5rem;
+  white-space: pre-wrap;
+  opacity: 0.85;
+}
+
+/* Where the actuation agent is about to click or type. */
+.agent-target {
+  outline: 2px solid #f59e0b;
+  outline-offset: 2px;
+}
