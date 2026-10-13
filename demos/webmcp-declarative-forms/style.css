@@ -1,0 +1,254 @@
+/* Tailwind (browser CDN) does the heavy lifting; this is only what's awkward to inline. */
+
+:root {
+  color-scheme: light dark;
+  --field-bg: #fff;
+  --field-border: #cbd5e1;
+  --field-fg: #0f172a;
+  --label-fg: #64748b;
+  --review: #f59e0b;
+  --focus: #6366f1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --field-bg: #020617;
+    --field-border: #334155;
+    --field-fg: #f1f5f9;
+    --label-fg: #94a3b8;
+    --review: #fbbf24;
+  }
+}
+
+/* --- Form fields ---------------------------------------------------------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--label-fg);
+}
+
+.field:has(> input[type='checkbox']) {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.field input:not([type='checkbox']),
+.field select {
+  margin-top: 0.25rem;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--field-border);
+  border-radius: 0.5rem;
+  background: var(--field-bg);
+  color: var(--field-fg);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.field input[name='origin'],
+.field input[name='destination'] {
+  text-transform: uppercase;
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--focus) 60%, transparent);
+  outline-offset: 1px;
+}
+
+.submit-btn {
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+}
+
+/* Brief flash on every field the agent writes into. */
+.agent-filled {
+  animation: agent-fill 1.2s ease-out;
+}
+
+@keyframes agent-fill {
+  from {
+    box-shadow: 0 0 0 3px color-mix(in oklab, #8b5cf6 55%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 3px transparent;
+  }
+}
+
+/* --- :tool-form-active / :tool-submit-active ---------------------------------
+ * The real pseudo-classes, as named in the declarative API explainer. Browsers
+ * that don't know them drop these rules, which is why each one is on its own.
+ */
+form:tool-form-active {
+  outline: 2px dashed var(--review);
+  outline-offset: 8px;
+  border-radius: 0.5rem;
+}
+
+form:tool-form-active .tool-review-note {
+  display: block;
+}
+
+:tool-submit-active {
+  animation: review-pulse 1.4s ease-in-out infinite;
+}
+
+/* The shim can't make a pseudo-class match, so it mirrors them as data
+ * attributes: data-tool-form-active on the form, data-tool-submit-active on
+ * its default submit button. Same styles. */
+form[data-tool-form-active] {
+  outline: 2px dashed var(--review);
+  outline-offset: 8px;
+  border-radius: 0.5rem;
+}
+
+form[data-tool-form-active] .tool-review-note {
+  display: block;
+}
+
+[data-tool-submit-active] {
+  animation: review-pulse 1.4s ease-in-out infinite;
+}
+
+.tool-review-note {
+  display: none;
+  border-radius: 0.5rem;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #92400e;
+  background: color-mix(in oklab, var(--review) 18%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  .tool-review-note {
+    color: #fde68a;
+  }
+}
+
+@keyframes review-pulse {
+  50% {
+    box-shadow: 0 0 0 5px color-mix(in oklab, var(--review) 45%, transparent);
+  }
+}
+
+/* --- ?nojs mode ------------------------------------------------------------ */
+
+.nojs-only {
+  display: none;
+}
+
+html[data-nojs] .nojs-only {
+  display: block;
+}
+
+html[data-nojs] [data-needs-js] {
+  display: none;
+}
+
+/* --- Agent panel (from part 1) ---------------------------------------------- */
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.metrics > div {
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: color-mix(in oklab, currentColor 5%, transparent);
+}
+
+.metrics dt {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.metrics dd {
+  font: 600 1.1rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.run-btn {
+  width: 100%;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+}
+
+.run-btn:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+.log {
+  margin-top: 1rem;
+  max-height: 20rem;
+  overflow: auto;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background: color-mix(in oklab, currentColor 4%, transparent);
+  font: 0.75rem/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.log:empty::before {
+  content: 'Waiting for a run…';
+  opacity: 0.5;
+}
+
+.log-line {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: 0 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+.log-tag {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  line-height: 1.85;
+}
+
+.log-json > details {
+  grid-column: 2;
+}
+
+.log-json summary {
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.log-json pre {
+  margin: 0.25rem 0 0.5rem;
+  white-space: pre-wrap;
+  opacity: 0.85;
+}
+
+/* --- Schema inspector -------------------------------------------------------- */
+
+.schema-json {
+  margin-top: 0.5rem;
+  max-height: 16rem;
+  overflow: auto;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: color-mix(in oklab, currentColor 4%, transparent);
+  font: 0.7rem/1.55 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

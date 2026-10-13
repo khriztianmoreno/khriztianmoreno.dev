@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Form submitted — WebMCP declarative forms demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+    <link rel="icon" href="data:," />
+  </head>
+  <body class="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
+    <main class="mx-auto max-w-2xl px-4 py-8 sm:py-10">
+      <p class="text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">WebMCP · part 2</p>
+      <h1 class="mt-2 text-2xl font-bold tracking-tight">The form submitted the old-fashioned way</h1>
+      <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+        No submit handler ran, so the browser did what it has always done with a <code>method="get"</code> form: it
+        navigated here with every named field in the query string. On a real site, a server would render the
+        search results or create the booking at this URL. This is a static demo, so it only shows you what arrived.
+      </p>
+
+      <noscript>
+        <p class="mt-4 rounded-xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+          JavaScript is off, so this page can't list the fields. Look at the address bar: everything the form sent is in
+          the query string.
+        </p>
+      </noscript>
+
+      <dl id="fields" class="mt-6 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white text-sm shadow-sm dark:divide-slate-800 dark:border-slate-800 dark:bg-slate-900"></dl>
+
+      <p class="mt-6 text-sm">
+        <a class="font-medium text-indigo-600 underline-offset-2 hover:underline dark:text-indigo-400" href="./">← Back to the demo</a>
+      </p>
+    </main>
+
+    <script type="module">
+      const list = document.getElementById('fields');
+      const params = [...new URLSearchParams(location.search)];
+      if (params.length === 0) list.hidden = true;
+      for (const [key, value] of params) {
+        const row = document.createElement('div');
+        row.className = 'flex justify-between gap-4 px-4 py-2';
+        const dt = document.createElement('dt');
+        dt.className = 'font-mono text-slate-500';
+        dt.textContent = key;
+        const dd = document.createElement('dd');
+        dd.className = 'min-w-0 break-all text-right font-medium';
+        dd.textContent = value;
+        row.append(dt, dd);
+        list.append(row);
+      }
+    </script>
+  </body>
+</html>

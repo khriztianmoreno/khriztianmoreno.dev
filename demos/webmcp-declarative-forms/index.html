@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WebMCP declarative forms: tools without JavaScript — demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css" />
+    <noscript><style>[data-needs-js] { display: none !important; }</style></noscript>
+  </head>
+  <body class="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
+    <div class="mx-auto max-w-6xl px-4 py-8 sm:py-10">
+      <header class="max-w-3xl">
+        <p class="text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">WebMCP · part 2</p>
+        <h1 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Your forms are already tools</h1>
+        <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+          Two ordinary HTML forms with a few extra attributes (<code>toolname</code>, <code>tooldescription</code>,
+          <code>toolparamdescription</code>, <code>toolautosubmit</code>). An agent fills them from their markup alone;
+          a human sees normal forms. JavaScript only comes in to answer the agent without navigating.
+          Companion demo for
+          <a class="font-medium text-indigo-600 underline-offset-2 hover:underline dark:text-indigo-400" href="https://www.khriztianmoreno.dev/blog/webmcp-declarative-forms">the blog post</a>
+          — see <a class="font-medium text-indigo-600 underline-offset-2 hover:underline dark:text-indigo-400" href="./README.md">README.md</a>.
+        </p>
+      </header>
+
+      <noscript>
+        <p class="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+          JavaScript is off. The forms below still work: they submit as plain GET forms to <code>submitted.html</code>.
+          The agent panel and the schema inspector need JavaScript, so they're hidden.
+        </p>
+      </noscript>
+
+      <p class="nojs-only mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+        <strong>Page script skipped (<code>?nojs</code>).</strong> The forms behave as if JavaScript were disabled: the
+        passenger stepper stays a plain number input, and submitting navigates to <code>submitted.html</code> with a
+        normal GET. For the real thing, disable JavaScript in DevTools.
+        <a class="font-medium underline underline-offset-2" href="./">Back to the full demo</a>.
+      </p>
+
+      <!-- Goal + global controls -->
+      <section data-needs-js class="mt-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between dark:border-slate-800 dark:bg-slate-900">
+        <div class="min-w-0">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Agent goal</p>
+          <p id="goal" class="mt-0.5 text-sm font-medium"></p>
+          <p class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+            <span
+              id="runtime"
+              class="rounded-full bg-slate-100 px-2 py-0.5 font-mono font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300 data-[kind=native]:bg-emerald-100 data-[kind=native]:text-emerald-800 dark:data-[kind=native]:bg-emerald-950 dark:data-[kind=native]:text-emerald-300 data-[kind=shim]:bg-amber-100 data-[kind=shim]:text-amber-800 dark:data-[kind=shim]:bg-amber-950 dark:data-[kind=shim]:text-amber-300"
+              >detecting…</span
+            >
+            <span>Declarative tools always run on the in-page shim: there's no documented way to feature-detect the declarative API.</span>
+          </p>
+        </div>
+
+        <div class="flex shrink-0 flex-wrap items-center gap-3">
+          <a href="?nojs" class="text-sm font-medium text-indigo-600 underline-offset-2 hover:underline dark:text-indigo-400">View without the page script</a>
+          <button
+            id="reset"
+            class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
+          >
+            Reset
+          </button>
+        </div>
+      </section>
+
+      <main class="mt-6 grid gap-6 lg:grid-cols-2">
+        <!-- The app: plain HTML forms. Everything an agent needs is in the attributes. -->
+        <section class="min-w-0">
+          <h2 class="mb-2 text-sm font-semibold text-slate-500">The app</h2>
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="mb-4 flex items-center justify-between">
+              <span class="text-lg font-semibold tracking-tight">SkyFare</span>
+              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300">plain &lt;form&gt;s</span>
+            </div>
+
+            <form
+              id="search-form"
+              action="submitted.html"
+              method="get"
+              toolname="search_flights"
+              tooldescription="Search flights between two airports on a given date. Returns each flight's id, airline, times, number of stops and per-passenger price."
+              toolautosubmit
+              class="tool-form grid grid-cols-2 gap-3 sm:grid-cols-4"
+            >
+              <label class="field">From
+                <input name="origin" required pattern="[A-Za-z]{3}" maxlength="3" placeholder="BOG" autocomplete="off" title="3-letter airport code"
+                  toolparamdescription="Origin airport, as a 3-letter IATA code (e.g. BOG)" />
+              </label>
+              <label class="field">To
+                <input name="destination" required pattern="[A-Za-z]{3}" maxlength="3" placeholder="MAD" autocomplete="off" title="3-letter airport code"
+                  toolparamdescription="Destination airport, as a 3-letter IATA code (e.g. MAD)" />
+              </label>
+              <label class="field col-span-2">Date
+                <input name="date" type="date" required min="2026-10-13" max="2027-10-12"
+                  toolparamdescription="Departure date" />
+              </label>
+              <label class="field col-span-2">Cabin
+                <select name="cabin" toolparamdescription="Cabin class">
+                  <option value="economy" selected>Economy</option>
+                  <option value="premium">Premium economy</option>
+                  <option value="business">Business</option>
+                </select>
+              </label>
+              <div class="field col-span-2 sm:col-span-1">
+                <span id="passengers-label">Passengers</span>
+                <!-- A form-associated custom element, with a plain input as its no-JS fallback. -->
+                <passenger-stepper class="mt-1" aria-labelledby="passengers-label">
+                  <input name="passengers" type="number" min="1" max="6" value="1" aria-labelledby="passengers-label"
+                    toolparamdescription="Number of passengers, from 1 to 6" />
+                </passenger-stepper>
+              </div>
+              <button type="submit" class="submit-btn col-span-2 self-end bg-indigo-600 hover:bg-indigo-500 sm:col-span-1">Search flights</button>
+            </form>
+
+            <ul id="results" class="mt-4 space-y-2" aria-live="polite"></ul>
+
+            <hr class="my-5 border-slate-200 dark:border-slate-800" />
+
+            <form
+              id="book-form"
+              action="submitted.html"
+              method="get"
+              toolname="book_flight"
+              tooldescription="Book one flight for one passenger. The form is filled in for the user, who reviews it and confirms the booking."
+              class="tool-form grid grid-cols-2 gap-3"
+            >
+              <p class="tool-review-note col-span-2">The agent filled this form. Review it, then confirm.</p>
+              <label class="field col-span-2">Flight
+                <select name="flight" required toolparamdescription="The id of a flight returned by search_flights">
+                  <option value="">Choose a flight…</option>
+                  <option value="AV-010">AV-010 · Avianca · BOG → MAD</option>
+                  <option value="IB-6584">IB-6584 · Iberia · BOG → MAD</option>
+                  <option value="AA-920">AA-920 · American · BOG → MAD</option>
+                  <option value="UX-196">UX-196 · Air Europa · BOG → MAD</option>
+                  <option value="AV-024">AV-024 · Avianca · MDE → MAD</option>
+                  <option value="CM-201">CM-201 · Copa · BOG → MIA</option>
+                  <option value="AV-044">AV-044 · Avianca · BOG → MIA</option>
+                </select>
+              </label>
+              <label class="field col-span-2 sm:col-span-1">Passenger
+                <input name="passenger" required minlength="2" maxlength="80" autocomplete="off" placeholder="Full name"
+                  toolparamdescription="Passenger's full name, as on their passport" />
+              </label>
+              <label class="field col-span-2 sm:col-span-1">Email
+                <input name="email" type="email" required autocomplete="off" placeholder="you@example.com"
+                  toolparamdescription="Contact email for the confirmation" />
+              </label>
+              <label class="field">Checked bags
+                <input name="bags" type="number" min="0" max="3" value="0"
+                  toolparamdescription="Checked bags, from 0 to 3" />
+              </label>
+              <label class="field self-end pb-2">
+                <input name="insurance" type="checkbox" class="h-4 w-4"
+                  toolparamdescription="Add travel insurance" />
+                Travel insurance
+              </label>
+              <div class="col-span-2 flex justify-end gap-2">
+                <button type="reset" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">Clear</button>
+                <button type="submit" class="submit-btn bg-emerald-600 hover:bg-emerald-500">Confirm booking</button>
+              </div>
+            </form>
+
+            <div id="confirmation" class="mt-4" aria-live="polite"></div>
+          </div>
+          <p class="mt-2 text-xs leading-relaxed text-slate-500">
+            Fill either form yourself: same markup, same submit handler, no agent involved.
+          </p>
+        </section>
+
+        <section data-needs-js class="flex min-w-0 flex-col gap-6">
+          <!-- The simulated agent -->
+          <article id="agent-panel" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h2 class="font-semibold">Simulated agent</h2>
+                <p class="mt-0.5 text-xs text-slate-500">Discover forms-as-tools → fill them → auto-submit or wait for you.</p>
+              </div>
+              <span data-status></span>
+            </div>
+            <dl class="metrics">
+              <div><dt>Tools</dt><dd data-metric="tools">0</dd></div>
+              <div><dt>Tool calls</dt><dd data-metric="calls">0</dd></div>
+              <div><dt>Human reviews</dt><dd data-metric="reviews">0</dd></div>
+            </dl>
+            <div class="flex gap-2">
+              <button id="run-agent" class="run-btn bg-violet-600 hover:bg-violet-500">Run agent</button>
+              <button id="cancel-agent" disabled class="shrink-0 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-100 disabled:opacity-40 dark:border-slate-700 dark:hover:bg-slate-800">Cancel call</button>
+            </div>
+            <ol data-log class="log"></ol>
+          </article>
+
+          <!-- What the agent sees -->
+          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h2 class="font-semibold">Schema inspector</h2>
+                <p class="mt-0.5 text-xs text-slate-500">Re-synthesized live from the markup (MutationObserver).</p>
+              </div>
+              <span id="schema-updates" class="shrink-0 text-right text-xs text-slate-500"></span>
+            </div>
+            <p class="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+              Our approximation of input schema synthesis — the real algorithm is TBD.
+            </p>
+            <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+              <label class="flex items-center gap-2">
+                <input id="toggle-autosubmit" type="checkbox" class="h-4 w-4" />
+                <code class="text-xs">toolautosubmit</code> on the booking form
+              </label>
+              <button id="rename-tool" class="rounded-lg border border-slate-300 px-2.5 py-1 text-xs font-medium hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">Rename to reserve_flight</button>
+            </div>
+            <ul id="schemas" class="mt-3 space-y-3"></ul>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
