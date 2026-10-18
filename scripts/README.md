@@ -1,7 +1,8 @@
-# dev.to cross-posting
+# Blog cross-posting
 
-Scripts to cross-post the English blog posts to [dev.to](https://dev.to/khriztianmoreno)
-with a `canonical_url` pointing back to the original on `khriztianmoreno.dev`.
+Scripts to syndicate the English blog posts to discovery platforms
+([dev.to](https://dev.to/khriztianmoreno), Hashnode) with the canonical
+pointing back to the original on `khriztianmoreno.dev`, plus notes on daily.dev.
 
 ## Golden rule
 
@@ -14,9 +15,24 @@ though dev.to shows the cross-post date (dev.to has no way to backdate).
 
 | File | Purpose |
 | --- | --- |
-| `lib/devto-posts.js` | Shared logic: finds English posts not yet on dev.to, builds canonical URLs, sanitizes tags, orders oldest-first. |
+| `lib/posts.js` | Shared logic: reads/normalizes English posts (slug, canonical URL, tags, date, body); dev.to dedup helpers. |
+| `lib/env.js` | Loads project-root `.env.local` into `process.env` (native, no dependency). |
 | `devto-crosspost.js` | Generates `published: false` draft `.md` files under `devto-export/`. Dedups against the **public** feed only. |
-| `devto-upload.js` | Schedules pending posts via the dev.to API, one per day. Dedups against **all** your articles (incl. scheduled) when given an API key. **This is the source of truth for the day-to-day flow.** |
+| `devto-upload.js` | Schedules pending posts via the dev.to API, one per day. Dedups against **all** your articles (incl. scheduled) when given an API key. **Source of truth for the dev.to day-to-day flow.** |
+| `hashnode-upload.js` | Publishes pending posts to your Hashnode publication via GraphQL, canonical via `originalArticleURL`. Publishes immediately; use `--limit` to drip. |
+
+## Configuration (`.env.local`)
+
+The scripts read secrets from the project-root `.env.local` (gitignored) via
+Node's native `process.loadEnvFile` — no `dotenv` dependency. Add:
+
+```sh
+DEV_TO_API_KEY=your_devto_key
+HASHNODE_API_KEY=your_hashnode_token
+```
+
+With these set you can drop the inline `KEY=... ` prefix from every command
+below. Inline shell vars still work and **take precedence** over the file.
 
 ## New-post flow
 
@@ -26,7 +42,7 @@ though dev.to shows the cross-post date (dev.to has no way to backdate).
 2. **See what's new** (dry run, *with* the key so it also skips already-scheduled posts):
 
    ```sh
-   DEV_TO_API_KEY=xxx node scripts/devto-upload.js
+   node scripts/devto-upload.js
    ```
 
    Everything already on dev.to is skipped; only the new post(s) show up.
@@ -34,7 +50,7 @@ though dev.to shows the cross-post date (dev.to has no way to backdate).
 3. **Schedule it**:
 
    ```sh
-   DEV_TO_API_KEY=xxx node scripts/devto-upload.js --start 2026-12-18 --confirm
+   node scripts/devto-upload.js --start 2026-12-18 --confirm
    ```
 
    Idempotent and re-runnable: a scheduled/live post is never posted twice.
@@ -50,16 +66,69 @@ though dev.to shows the cross-post date (dev.to has no way to backdate).
 | `--limit N` | all | Only process the first N pending posts (use `--limit 1` to test). |
 | `--order date\|alpha` | `date` | `date` = oldest original first. |
 
-Auth: `DEV_TO_API_KEY` from dev.to → Settings → Extensions → "DEV Community API Keys".
+Auth: `DEV_TO_API_KEY` (from dev.to → Settings → Extensions → "DEV Community API Keys"), set in `.env.local`.
 
-## Point social media at your site, never at dev.to
+## Hashnode
+
+> ⚠️ **Paid as of 2026.** Hashnode's GraphQL API now requires a **Pro plan** on
+> the publication (*"Every API request, queries and mutations, now requires a Pro
+> plan"*). Without Pro, calls are redirected (HTTP 301) to an announcement page
+> and the script reports that. The script below is ready but only works on Pro.
+
+Hashnode has a GraphQL API (`https://gql.hashnode.com`), so cross-posting
+is automatable like dev.to — if you have Pro.
+
+1. **Create a publication (blog) on Hashnode** if you don't have one, then a
+   **Personal Access Token:** Hashnode → Settings → Developer → Generate Token.
+   Put it in `.env.local` as `HASHNODE_API_KEY`.
+2. **Test one post first:**
+
+   ```sh
+   node scripts/hashnode-upload.js --limit 1 --confirm
+   ```
+
+   Open it on Hashnode and confirm the "originally published at" canonical
+   points to `khriztianmoreno.dev`.
+
+3. **Publish the rest** (or keep dripping with `--limit`):
+
+   ```sh
+   node scripts/hashnode-upload.js --confirm
+   ```
+
+Notes:
+- Requires an existing publication; `"No publications found for this token"`
+  means you have no Hashnode blog yet (or the token lacks access).
+- The target publication is auto-detected from your token (first one). Override
+  with `--publication-host your-blog.hashnode.dev`.
+- **Publishes immediately** — Hashnode API scheduling isn't verified. To avoid
+  flooding, drip with `--limit 1 --confirm` daily (manual or cron). Dedup against
+  published posts makes re-runs safe.
+- `--backdate` sets `publishedAt` to the post's original date (experimental —
+  verify in the test run; Hashnode, unlike dev.to, may preserve the real date).
+- Tags: up to 5, as `{ slug, name }`.
+
+## daily.dev
+
+daily.dev is an **aggregator, not a publishing target** — there is nothing to
+script. It ingests your RSS and surfaces posts to its dev audience, linking
+**straight to your site** (zero duplication, no canonical juggling). Best ROI
+for pure discovery.
+
+One-time setup:
+1. Your feed is live: `https://www.khriztianmoreno.dev/rss.xml` (68 items, verified).
+2. Submit it as a source: daily.dev → your profile → "Suggest new source" (or
+   via the daily.dev companion/app), pasting the RSS URL above.
+3. New posts appear automatically as your feed updates — nothing to run per post.
+
+## Point social media at your site, never at the platforms
 
 - **Your audience** (X, LinkedIn, newsletter) → `khriztianmoreno.dev/blog/<slug>`.
-- **dev.to's audience** discovers you through its own feed/tags; the canonical
-  credits your site.
+- **Each platform's audience** (dev.to, Hashnode, daily.dev) discovers you through
+  its own feed/tags; the canonical credits your site.
 
-Sending your own followers to dev.to hands your traffic, analytics, and SEO to a
-platform you don't control. Your site is the house; dev.to is the flyer on the street.
+Sending your own followers to a platform hands your traffic, analytics, and SEO to
+something you don't control. Your site is the house; the platforms are flyers on the street.
 
 ## Caveats
 

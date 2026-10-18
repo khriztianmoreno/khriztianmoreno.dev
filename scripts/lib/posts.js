@@ -1,10 +1,9 @@
 /**
- * Shared helpers for the dev.to cross-posting scripts.
+ * Shared helpers for the cross-posting scripts (dev.to, Hashnode, …).
  *
- * Collects the English posts that are NOT yet published on dev.to (matched
- * by normalized title) and normalizes the metadata both the draft generator
- * and the API uploader need: slug, canonical URL, sanitized tags, original
- * publish date (for ordering), and the raw markdown body.
+ * `listEnglishPosts` reads and normalizes every English post (slug, canonical
+ * URL, raw tags, original date, body). Each platform script then fetches its
+ * own set of already-published titles and filters with `normalizeTitle`.
  */
 
 const fs = require('node:fs');
@@ -38,7 +37,7 @@ function canonicalUrl(slug) {
 }
 
 /** dev.to tag rules: max 4, lowercase alphanumeric only, deduped. */
-function sanitizeTags(tags) {
+function sanitizeTags(tags, max = 4) {
   const seen = new Set();
   const out = [];
   for (const raw of Array.isArray(tags) ? tags : []) {
@@ -51,7 +50,7 @@ function sanitizeTags(tags) {
       seen.add(clean);
       out.push(clean);
     }
-    if (out.length === 4) break;
+    if (out.length === max) break;
   }
   return out;
 }
@@ -62,6 +61,46 @@ function dateToTimestamp(value) {
   if (value instanceof Date) return value.getTime();
   const parsed = value ? Date.parse(String(value)) : NaN;
   return Number.isNaN(parsed) ? Number.POSITIVE_INFINITY : parsed;
+}
+
+/**
+ * Reads every English post and returns them normalized:
+ * { slug, filename, title, tags (raw array), canonical, body, date, ts }.
+ * `order`: 'date' (oldest original first, default) or 'alpha'.
+ */
+function listEnglishPosts({ order = 'date' } = {}) {
+  if (!fs.existsSync(EN_POSTS_DIR)) {
+    throw new Error(`English posts dir not found: ${EN_POSTS_DIR}`);
+  }
+
+  const filenames = fs
+    .readdirSync(EN_POSTS_DIR)
+    .filter((name) => name.endsWith('.md'))
+    .sort();
+
+  const posts = filenames.map((filename) => {
+    const slug = slugFromFilename(filename);
+    const raw = fs.readFileSync(path.join(EN_POSTS_DIR, filename), 'utf-8');
+    const { data, content } = matter(raw);
+    return {
+      slug,
+      filename,
+      title: data.title ?? slug,
+      tags: Array.isArray(data.tags) ? data.tags : [],
+      canonical: canonicalUrl(slug),
+      body: content.replace(/^\s+/, ''),
+      date: data.date ?? null,
+      ts: dateToTimestamp(data.date),
+    };
+  });
+
+  if (order === 'alpha') {
+    posts.sort((a, b) => a.filename.localeCompare(b.filename));
+  } else {
+    posts.sort((a, b) => a.ts - b.ts);
+  }
+
+  return posts;
 }
 
 /** Fetches the set of normalized titles published on dev.to (public feed:
@@ -78,7 +117,7 @@ async function fetchDevtoTitles() {
   return new Set(articles.map((a) => normalizeTitle(a.title)));
 }
 
-/** Fetches normalized titles of ALL the authenticated user's articles,
+/** Fetches normalized titles of ALL the authenticated user's dev.to articles,
  * including drafts and SCHEDULED posts (future published_at) that the public
  * feed hides. Required so re-runs don't re-post an already-scheduled article. */
 async function fetchOwnTitles(apiKey) {
@@ -86,12 +125,7 @@ async function fetchOwnTitles(apiKey) {
   for (let page = 1; ; page++) {
     const res = await fetch(
       `https://dev.to/api/articles/me/all?per_page=1000&page=${page}`,
-      {
-        headers: {
-          Accept: 'application/vnd.forem.api-v1+json',
-          'api-key': apiKey,
-        },
-      }
+      { headers: { Accept: 'application/vnd.forem.api-v1+json', 'api-key': apiKey } }
     );
     if (!res.ok) {
       throw new Error(`dev.to /articles/me/all responded ${res.status} ${res.statusText}`);
@@ -105,60 +139,27 @@ async function fetchOwnTitles(apiKey) {
 }
 
 /**
- * Returns { pending, skipped, total }. `pending` is the list of English posts
- * not yet on dev.to, each: { slug, filename, title, tags, canonical, body, date }.
- * By default pending is ordered oldest-original-first so a daily drip respects
- * the original chronology.
+ * dev.to-specific: English posts not yet on dev.to, with dev.to-sanitized tags.
+ * Returns { pending, skipped, total }. Pass `apiKey` to also exclude the user's
+ * drafts/scheduled posts (hidden from the public feed).
  */
 async function collectPendingPosts({ order = 'date', apiKey = null } = {}) {
-  if (!fs.existsSync(EN_POSTS_DIR)) {
-    throw new Error(`English posts dir not found: ${EN_POSTS_DIR}`);
-  }
-
-  const publishedTitles = await fetchDevtoTitles();
-  // With a key, also exclude drafts/scheduled posts the public feed hides.
+  const published = await fetchDevtoTitles();
   if (apiKey) {
-    const own = await fetchOwnTitles(apiKey);
-    own.forEach((t) => publishedTitles.add(t));
+    (await fetchOwnTitles(apiKey)).forEach((t) => published.add(t));
   }
-  const filenames = fs
-    .readdirSync(EN_POSTS_DIR)
-    .filter((name) => name.endsWith('.md'))
-    .sort();
 
   const pending = [];
   const skipped = [];
-
-  for (const filename of filenames) {
-    const slug = slugFromFilename(filename);
-    const raw = fs.readFileSync(path.join(EN_POSTS_DIR, filename), 'utf-8');
-    const { data, content } = matter(raw);
-    const title = data.title ?? slug;
-
-    if (publishedTitles.has(normalizeTitle(title))) {
-      skipped.push(title);
-      continue;
+  for (const post of listEnglishPosts({ order })) {
+    if (published.has(normalizeTitle(post.title))) {
+      skipped.push(post.title);
+    } else {
+      pending.push({ ...post, tags: sanitizeTags(post.tags) });
     }
-
-    pending.push({
-      slug,
-      filename,
-      title,
-      tags: sanitizeTags(data.tags),
-      canonical: canonicalUrl(slug),
-      body: content.replace(/^\s+/, ''),
-      date: data.date ?? null,
-      ts: dateToTimestamp(data.date),
-    });
   }
 
-  if (order === 'date') {
-    pending.sort((a, b) => a.ts - b.ts);
-  } else {
-    pending.sort((a, b) => a.filename.localeCompare(b.filename));
-  }
-
-  return { pending, skipped, total: filenames.length };
+  return { pending, skipped, total: pending.length + skipped.length };
 }
 
 module.exports = {
@@ -169,6 +170,8 @@ module.exports = {
   slugFromFilename,
   canonicalUrl,
   sanitizeTags,
+  dateToTimestamp,
+  listEnglishPosts,
   fetchDevtoTitles,
   fetchOwnTitles,
   collectPendingPosts,

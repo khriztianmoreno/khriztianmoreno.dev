@@ -13,7 +13,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { collectPendingPosts } = require('./lib/devto-posts');
+const { collectPendingPosts } = require('./lib/posts');
 
 const OUT_DIR = path.join(process.cwd(), 'scripts', 'devto-export');
 const listOnly = process.argv.includes('--list');

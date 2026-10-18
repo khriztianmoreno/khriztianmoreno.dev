@@ -30,7 +30,8 @@
  *   --confirm            Actually POST to dev.to (otherwise dry run)
  */
 
-const { collectPendingPosts } = require('./lib/devto-posts');
+require('./lib/env');
+const { collectPendingPosts } = require('./lib/posts');
 
 const API_URL = 'https://dev.to/api/articles';
 const RATE_LIMIT_MS = 4000; // dev.to allows ~10 requests / 30s
