@@ -19,6 +19,7 @@ though dev.to shows the cross-post date (dev.to has no way to backdate).
 | `lib/env.js` | Loads project-root `.env.local` into `process.env` (native, no dependency). |
 | `devto-crosspost.js` | Generates `published: false` draft `.md` files under `devto-export/`. Dedups against the **public** feed only. |
 | `devto-upload.js` | Schedules pending posts via the dev.to API, one per day. Dedups against **all** your articles (incl. scheduled) when given an API key. **Source of truth for the dev.to day-to-day flow.** |
+| `devto-reschedule.js` | Reschedules already-created dev.to cross-posts to a single target date via `PUT` (never delete/recreate). Only touches future-scheduled posts matched to this repo; protects the already-published back catalog. |
 | `hashnode-upload.js` | Publishes pending posts to your Hashnode publication via GraphQL, canonical via `originalArticleURL`. Publishes immediately; use `--limit` to drip. |
 
 ## Configuration (`.env.local`)
@@ -68,6 +69,29 @@ below. Inline shell vars still work and **take precedence** over the file.
 
 Auth: `DEV_TO_API_KEY` (from dev.to → Settings → Extensions → "DEV Community API Keys"), set in `.env.local`.
 
+## Rescheduling already-scheduled posts (`devto-reschedule.js`)
+
+To move the scheduled cross-posts to a different date, **update** them — never
+delete and recreate (that loses URLs, canonical, reactions and comments).
+
+```sh
+node scripts/devto-reschedule.js                     # dry run, preview
+node scripts/devto-reschedule.js --limit 1 --confirm # move ONE (test first)
+node scripts/devto-reschedule.js --confirm           # move the rest
+```
+
+Key behavior:
+
+- **Only future-scheduled posts are touched.** dev.to reports `published: true`
+  for scheduled posts too, so "already visible" is decided by `published_at` vs
+  now — your past-dated back catalog is skipped (use `--include-live` to override).
+- Bodies are **rebuilt from the repo** (the source of truth) with the new
+  `published_at`; the `GET /articles/{id}` endpoint 404s for scheduled posts.
+- `--date YYYY-MM-DD` (default tomorrow), `--time HH:MM` (default 13:00 UTC),
+  `--limit N`, `--include-live`, `--confirm`.
+- ⚠️ Setting all posts to the same date publishes them **all at once** — a feed
+  flood. Prefer re-dripping unless you deliberately want a single-day dump.
+
 ## Hashnode
 
 > ⚠️ **Paid as of 2026.** Hashnode's GraphQL API now requires a **Pro plan** on
@@ -110,16 +134,17 @@ Notes:
 
 ## daily.dev
 
-daily.dev is an **aggregator, not a publishing target** — there is nothing to
-script. It ingests your RSS and surfaces posts to its dev audience, linking
-**straight to your site** (zero duplication, no canonical juggling). Best ROI
-for pure discovery.
+daily.dev is an aggregator, not a publishing target — there is nothing to script.
 
-One-time setup:
-1. Your feed is live: `https://www.khriztianmoreno.dev/rss.xml` (68 items, verified).
-2. Submit it as a source: daily.dev → your profile → "Suggest new source" (or
-   via the daily.dev companion/app), pasting the RSS URL above.
-3. New posts appear automatically as your feed updates — nothing to run per post.
+> ⚠️ **Personal blogs are not eligible as a source.** Per the official docs:
+> *"Corporate and personal blogs are not eligible."* There is also **no backfill**
+> (only posts published after approval would be ingested). The MCP server
+> (`dailydev`) is read/personalization only — it has no source-submission tool.
+
+Realistic paths for an individual blog:
+- **Start a Squad** (the alternative daily.dev recommends) and share your posts
+  there — a community commitment, not cross-post automation.
+- Otherwise, **deprioritize daily.dev**; the free automated discovery win is dev.to.
 
 ## Point social media at your site, never at the platforms
 
