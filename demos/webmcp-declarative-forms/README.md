@@ -46,7 +46,7 @@ Things the shim decides because the explainer doesn't (yet):
 - **Pseudo-classes.** A script can't make `:tool-form-active` / `:tool-submit-active` match, so the shim sets `data-tool-form-active` on the form and `data-tool-submit-active` on its submit button. [`style.css`](./style.css) has rules for both the real pseudo-classes and the data attributes.
 - **Human submit of an agent-filled form.** The explainer doesn't say whether that submission is `agentInvoked`. The shim treats it as completing the agent's call, so the agent gets the `respondWith()` result.
 - **Result format.** The shim resolves `executeTool()` with a JSON string, like the imperative API in part 1. How a declarative tool's response reaches the agent is [under debate (issue #135)](https://github.com/webmachinelearning/webmcp/issues/135).
-- **Event names.** The explainer calls the events `toolactivated` and `toolcanceled`. The spec IDL defines `ontoolcancel`. The shim fires both `toolcanceled` and `toolcancel` when the agent cancels.
+- **Event names.** The explainer (synced with the spec on 2026-10-16) and the spec IDL both use `toolactivated` and `toolcancel`. The shim fires `toolcancel` when the agent cancels. Whether declarative tools fire them at `ModelContext` or at the `<form>` is still open (issue #126).
 
 The native declarative API has **not** been tested with this demo.
 
@@ -55,7 +55,7 @@ The native declarative API has **not** been tested with this demo.
 1. **Run agent.** `search_flights` fills and submits itself (watch the results appear, and the URL doesn't change). Then `book_flight` is filled, outlined, and its **Confirm booking** button pulses and has focus. The agent waits. Click it to finish the run.
 2. **Fill the forms yourself.** Same markup, same submit handlers, no agent. `event.agentInvoked` is `false`, so `respondWith()` is never called.
 3. While the agent is waiting on the booking form, try each way to cancel:
-   - **Cancel call** (the agent cancels; `toolcanceled` fires)
+   - **Cancel call** (the agent cancels; `toolcancel` fires)
    - **Clear** (form reset)
    - **Rename to reserve_flight** (the tool declaration changes)
 4. Tick **`toolautosubmit` on the booking form** and run again. There's no human review step anymore. The inspector updates as you change attributes, because a `MutationObserver` re-synthesizes the schemas.

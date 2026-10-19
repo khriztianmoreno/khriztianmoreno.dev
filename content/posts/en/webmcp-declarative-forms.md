@@ -9,8 +9,10 @@ tags:
   - html
   - forms
 date: 2026-10-13 09:30:00
-updated: 2026-10-13 09:30:00
+updated: 2026-10-19 09:30:00
 ---
+
+> **UPDATE (October 19, 2026):** on October 16 the declarative explainer was synced with the spec and renamed the `toolcanceled` event to `toolcancel`, the same name the IDL defines. The naming mismatch is gone, so I updated the "An honest caveat" section and the demo, which now fires only `toolcancel`.
 
 In the [first post in this series](/blog/webmcp-fundamentals), every WebMCP tool was a JavaScript object: a name, a description, a hand-written `inputSchema`, and an `execute` function that called the store. It works, and for logic that lives in JavaScript it's exactly what you want. But look at your app for a second: where does most of what a user can *do* actually live? Search, filter, subscribe, book, pay, leave a comment. Almost all of it is a `<form>`.
 
@@ -242,7 +244,7 @@ If the imperative API is a proposal, the declarative one is a step further back:
 - **It only exists in an explainer.** It's not in the [spec](https://webmachinelearning.github.io/webmcp/), which is itself a Draft Community Group Report off the standards track.
 - **Schema synthesis is TBD.** Everything in the table is our approximation. Chromium is trialing its own loose version, and the result may differ.
 - **How the response gets back to the agent is under debate** ([issue #135](https://github.com/webmachinelearning/webmcp/issues/135)). `respondWith()` is in the explainer, but the no-JavaScript path (`application/ld+json` on the destination page) is still being discussed.
-- **The event names don't match.** The explainer talks about `toolactivated` and `toolcanceled`. The spec IDL, on the other hand, defines `ontoolcancel`. It's also still open whether they fire at `Window` or at the `<form>`. Meanwhile, the shim fires both `toolcanceled` and `toolcancel`.
+- **Where the events fire is still open.** The explainer and the spec IDL now agree on the names: `toolactivated` and `toolcancel`. What isn't settled is whether, for declarative tools, they fire at the `ModelContext` or at the `<form>` that registered the tool ([issue #126](https://github.com/webmachinelearning/webmcp/issues/126)). The shim fires them on its own object.
 - **Integration with `getTools()` / `executeTool()` is TBD.** The explainer says declarative tools will almost certainly be invokable through them, but the details aren't there. That's why the shim exposes its own `getTools()` / `executeTool()` and leaves `document.modelContext` alone.
 - **I haven't tested the native path.** There's no documented way to detect support for the declarative API, so the demo doesn't invent one: the declarative behavior is **always** the shim. If your browser exposes the imperative `document.modelContext`, the badge shows it, but that tells you nothing about forms.
 

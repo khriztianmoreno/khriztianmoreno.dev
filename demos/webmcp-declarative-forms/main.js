@@ -55,7 +55,7 @@ async function boot() {
   ui.reset();
   const tools = new DeclarativeToolsShim(document);
   tools.addEventListener('toolactivated', (e) => ui.log('observe', `toolactivated: ${e.toolName}`));
-  tools.addEventListener('toolcanceled', (e) => ui.log('observe', `toolcanceled: ${e.toolName}`));
+  tools.addEventListener('toolcancel', (e) => ui.log('observe', `toolcancel: ${e.toolName}`));
   await mountSchemaInspector({ tools, listEl: $('schemas'), updatesEl: $('schema-updates') });
 
   // --- Live attribute edits (watch the inspector and the agent react) -----

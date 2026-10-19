@@ -172,9 +172,7 @@ export class DeclarativeToolsShim extends EventTarget {
       () => {
         if (this.#pending.get(form) !== inv) return;
         this.#settle(form, { error: domError('The agent canceled the tool call.', 'AbortError') });
-        // The explainer calls it `toolcanceled`; the spec IDL defines
-        // `ontoolcancel`. Until that's reconciled, fire both.
-        this.dispatchEvent(toolEvent('toolcanceled', name));
+        // Explainer and spec IDL agree on `toolcancel` (explainer synced 2026-10-16).
         this.dispatchEvent(toolEvent('toolcancel', name));
       },
       { once: true },
@@ -282,7 +280,7 @@ export class DeclarativeToolsShim extends EventTarget {
   }
 
   #onReset(event) {
-    // Reset cancels the in-flight call. The explainer only fires `toolcanceled`
+    // Reset cancels the in-flight call. The explainer only fires `toolcancel`
     // when the *agent* cancels, so the shim fires no event here.
     this.#settle(event.target, { error: domError('The form was reset.', 'AbortError') });
   }
