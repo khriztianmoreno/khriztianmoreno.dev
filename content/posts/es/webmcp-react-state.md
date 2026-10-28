@@ -1,0 +1,318 @@
+---
+title: "Conectando el Client State de tu SPA con WebMCP: Hooks y Stores reactivos"
+tags:
+  - webmcp
+  - ai-agents
+  - mcp
+  - chrome-ai
+  - web-platform
+  - react
+  - javascript
+date: 2026-10-28 09:30:00
+updated: 2026-10-28 09:30:00
+---
+
+En el [primer post de la serie](/es/blog/webmcp-fundamentals) las tools se registraban una vez, al cargar la página, contra un store escrito en JavaScript plano. En el [segundo](/es/blog/webmcp-declarative-forms) ni siquiera había JavaScript: las tools eran formularios HTML. Los dos demos tienen algo en común que tu app probablemente no tiene: **nada se monta ni se desmonta.** La página carga, las tools existen, fin.
+
+Una app real no se ve así. Es una SPA: componentes que se montan y se desmontan con cada cambio de ruta, estado que vive en un store (Zustand, Redux, Pinia, signals, lo que uses) y un framework que re-renderiza cada vez que ese estado cambia. La pregunta obvia es *dónde* registrás las tools en ese mundo. La respuesta obvia ("en un `useEffect`, obvio") esconde dos trampas que me costó nombrar: tools que se re-registran en cada render, y tools que contestan con el estado de hace tres minutos.
+
+Este post es sobre la idea que te saca de las dos: **una tool de WebMCP es un contrato (nombre + schema + descripción), no un snapshot del estado.** La registrás una vez por ciclo de vida del componente, atás su desregistro al unmount, y leés el estado vivo adentro de `execute`, en el momento de la llamada. Así, un cambio de estado nunca re-registra nada.
+
+Armé un demo con el mismo dominio de vuelos, ahora en React con un store de Zustand. El código está en [`demos/webmcp-react-state`](https://github.com/khriztianmoreno/khriztianmoreno.dev/tree/main/demos/webmcp-react-state) (en el [README](https://github.com/khriztianmoreno/khriztianmoreno.dev/blob/main/demos/webmcp-react-state/README.md) tenés cómo correrlo). Como los anteriores, no tiene build: React, Zustand y [`htm`](https://github.com/developit/htm) (JSX sin transform) cargan desde un CDN.
+
+## Cómo funciona el demo
+
+<figure>
+  <video controls preload="metadata" width="100%">
+    <source src="https://res.cloudinary.com/khriztianmoreno/video/upload/f_auto,q_auto/v1793221126/blogpost-demos/webmcp-react-state/webmcp-react-state_etzdmx.mp4" type="video/mp4" />
+    Tu navegador no soporta video embebido — <a href="https://github.com/khriztianmoreno/khriztianmoreno.dev/tree/main/demos/webmcp-react-state">cloná el demo</a> y corrélo local.
+  </video>
+  <figcaption>La corrida completa: el closure viejo, el hook ingenuo contra el contrato, StrictMode, el seat map y el worker que no responde a tiempo.</figcaption>
+</figure>
+
+En el video vas a ver la corrida completa: los renders subiendo mientras los registros se quedan quietos, los contadores del hook ingenuo disparándose, y los rechazos no manejados de StrictMode apareciendo en la página.
+
+La app es un carrito de viaje: resultados de vuelos BOG → MAD, un botón "Add" en cada uno, y un carrito con pasajeros y subtotal. El estado vive en un store de Zustand. El componente `<TripCart>` es dueño de cuatro tools:
+
+- **`get_cart_items`** y **`get_trip_state`** (`readOnlyHint`): lectoras. No tienen un endpoint atrás, leen el store.
+- **`add_flight_to_cart`** y **`remove_from_cart`**: llaman a las acciones del store, y la UI reacciona igual que si hubieras hecho click.
+
+Hay dos componentes más con su propia tool: un **mapa de asientos** que podés abrir y cerrar (es dueño de `select_seat`), y una **cotización** que se calcula en un Web Worker (es dueño de `quote_fare`). Al lado de la app hay un **panel de contadores** (commits de `<TripCart>`, llamadas a `registerTool()`, signals abortados, eventos `toolchange` y rechazos no manejados), una **lista de `getTools()`** en vivo, y un **agente simulado**, igual que en la parte 1: sin LLM, con el plan hard-codeado, solo `getTools()` y `executeTool()`.
+
+El laboratorio te deja cambiar cómo registra sus tools `<TripCart>` (**Contract hook**, **Naive hook** o **Stale closure**) y prender o apagar **StrictMode** y **Catch registration promise**. Cada cambio vuelve a montar la raíz de React y resetea los contadores.
+
+En mis corridas (Chrome 155 headless, con el shim), con los mismos cinco cambios (agregar tres vuelos, sumar un pasajero, sacar un vuelo):
+
+1. **Contract hook:** los commits de `<TripCart>` van de 1 a 6. Las llamadas a `registerTool()` se quedan en **5** (las cuatro tools del carrito más `quote_fare`), con 0 abortos y 5 eventos `toolchange`.
+2. **Naive hook:** los mismos 6 commits, pero **25 registros, 20 abortos y 45 eventos `toolchange`**. Cada tool del carrito dice `registered ×6`.
+3. **Stale closure:** 5 registros, todo tranquilo... y cuando el agente lee el carrito después de que agregaste un vuelo a mano, recibe **un carrito vacío**.
+
+## El problema: la tool como snapshot
+
+Así lo escribiríamos casi todos en el primer intento. El componente ya tiene el estado a mano, así que armás la tool ahí mismo y la registrás en un efecto:
+
+```js
+/** Anti-pattern: `tool` is a new object every render, so this re-registers every render. */
+export function useNaiveWebMCPTool(tool) {
+  const { modelContext, catchRegistration } = useContext(WebMCPContext);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    registerWithSignal(modelContext, tool, controller.signal, catchRegistration);
+    return () => controller.abort();
+  }, [modelContext, catchRegistration, tool]);
+}
+```
+
+El objeto `tool` sale del render del componente, con un `execute` que cierra sobre el `cart` de ese render. Como es un objeto nuevo cada vez, el efecto ve una dependencia distinta en cada render: abortar, registrar, abortar, registrar. Los valores son correctos, pero lo pagás con un desregistro + registro por tool por render, y cada uno dispara un `toolchange`. La spec no los agrupa: cada registro y cada desregistro notifica a los documentos. Por eso 5 cambios en el carrito se convierten en 45 eventos.
+
+¿Por qué importa? Porque `toolchange` es la forma en que la página avisa que cambió su conjunto de tools: un agente dentro de la página escucha el evento, y un agente del navegador se entera por su propio mecanismo interno. Si tu app lo dispara cada vez que alguien escribe en un campo, le estás diciendo al agente "cambió todo" cuando no cambió nada. Qué hace un agente con eso en medio de una conversación (volver a leer la lista, ignorarlo, confundirse) depende del agente.
+
+El arreglo "obvio" (dependencias vacías) es la otra trampa:
+
+```js
+/** Anti-pattern: registered once, but `tool.execute` is the first render's closure. */
+export function useStaleWebMCPTool(tool) {
+  const { modelContext, catchRegistration } = useContext(WebMCPContext);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    registerWithSignal(modelContext, tool, controller.signal, catchRegistration);
+    return () => controller.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modelContext, catchRegistration]);
+}
+```
+
+Un solo registro, contadores perfectos, y un stale closure de manual: `execute` es para siempre la función del primer render. En el demo, agregás a mano el vuelo de Iberia, la UI lo muestra, y el `get_cart_items` del agente contesta `"items": []`. Es el peor tipo de bug: no hay error, el agente simplemente razona sobre una mentira.
+
+Las dos trampas vienen del mismo error: tratar la tool como **un snapshot del estado** que hay que "refrescar". No lo es. El nombre, la descripción y el schema no cambian cuando cambia el carrito. Lo que cambia es la respuesta, y la respuesta se calcula cuando el agente pregunta.
+
+## Pieza 1: no existe `unregisterTool()`, el ciclo de vida es un `AbortSignal`
+
+Antes del hook, un detalle que vas a ver mal en muchos lados (estaba también en mi plan original para este post): **la spec no tiene `unregisterTool()`.** El IDL de `ModelContext` tiene exactamente `registerTool(tool, { signal, exposedTo })`, `getTools()`, `executeTool()` y tres eventos: `toolchange`, `toolactivated` y `toolcancel`. Nada más.
+
+Desregistrás abortando el `signal` que pasaste al registrar. El [algoritmo de `registerTool()`](https://webmachinelearning.github.io/webmcp/) de la spec le agrega al signal estos pasos de aborto: *desregistrar la tool*, y *rechazar la promesa con el motivo del aborto*. Las dos cosas pasan de forma sincrónica, cuando llamás a `abort()`. En el shim del demo, [`webmcp-shim.js`](https://github.com/khriztianmoreno/khriztianmoreno.dev/blob/main/demos/webmcp-react-state/webmcp-shim.js), se ve así:
+
+```js
+    if (signal) {
+      signal.addEventListener(
+        'abort',
+        () => {
+          this.#unregister(name);
+          reject(signal.reason); // ignored if the promise already resolved
+        },
+        { once: true },
+      );
+    }
+```
+
+Para React, esto es un regalo. Un `AbortController` por efecto, `abort()` en el cleanup, y el ciclo de vida de la tool es el ciclo de vida del componente. Es la misma idea que vimos con los formularios declarativos, donde la tool vivía y moría con el elemento `<form>`. Y es el patrón que la web ya usa para `fetch` y `addEventListener`: un signal, una cancelación.
+
+Dos detalles más de la spec que importan acá: desregistrar una tool **no cancela una ejecución que ya está en curso** (el signal del registro controla la disponibilidad; el signal de `executeTool()` controla cada invocación), y si el signal llega ya abortado, `registerTool()` rechaza en el acto sin registrar nada.
+
+## Pieza 2: `useWebMCPTool`, línea por línea
+
+Este es el contract hook, en [`use-webmcp-tool.js`](https://github.com/khriztianmoreno/khriztianmoreno.dev/blob/main/demos/webmcp-react-state/use-webmcp-tool.js):
+
+```js
+export function useWebMCPTool(tool) {
+  const { modelContext, catchRegistration } = useContext(WebMCPContext);
+
+  const executeRef = useRef(tool.execute);
+  useLayoutEffect(() => {
+    executeRef.current = tool.execute;
+  });
+
+  const { name, title, description } = tool;
+  const schemaKey = JSON.stringify(tool.inputSchema ?? null);
+  const annotationsKey = JSON.stringify(tool.annotations ?? null);
+
+  useEffect(() => {
+    if (!modelContext) return; // no WebMCP here (yet): nothing to register
+
+    const controller = new AbortController();
+    const inputSchema = JSON.parse(schemaKey) ?? undefined;
+    const annotations = JSON.parse(annotationsKey) ?? undefined;
+
+    registerWithSignal(
+      modelContext,
+      {
+        name,
+        title,
+        description,
+        inputSchema,
+        annotations,
+        execute: (input, options) => executeRef.current(input, options),
+      },
+      controller.signal,
+      catchRegistration,
+    );
+
+    // There is no unregisterTool(). Aborting the signal is the unregistration.
+    return () => controller.abort();
+  }, [modelContext, catchRegistration, name, title, description, schemaKey, annotationsKey]);
+}
+```
+
+Parte por parte:
+
+- **`executeRef` + `useLayoutEffect` sin dependencias.** Después de cada commit, la ref apunta al `execute` del último render. La función que se registra en el navegador nunca cambia: es un trampolín que salta a `executeRef.current` *cuando el agente la llama*. Actualizo la ref en un efecto y no durante el render, porque escribir refs durante el render es algo que React te pide que no hagas.
+- **Las dependencias son el contrato.** `name`, `title`, `description`, y el schema y las anotaciones serializados como string. Serializarlos te deja pasar un objeto inline (`inputSchema: { type: 'object', … }`) sin que una identidad nueva en cada render fuerce un re-registro. Si el contrato cambia de verdad, el hook sí re-registra, y está bien: es justo cuando el agente tiene que recibir un `toolchange`.
+- **`catchRegistration`** es un toggle del laboratorio, para que el demo pueda mostrar qué pasa sin el `.catch`. En tu app no existe: siempre lo atrapás. Vamos a eso en la pieza 4.
+- **El cleanup es una línea.** `controller.abort()`. Sin nombres, sin mapas, sin llevar la cuenta de "¿ya se registró?".
+
+La prueba está en el mapa de asientos, en [`app.js`](https://github.com/khriztianmoreno/khriztianmoreno.dev/blob/main/demos/webmcp-react-state/app.js). `select_seat` se arma inline en cada render, y su `execute` cierra sobre estado local del componente (`occupied`). Cuando tocás "Refresh availability", el estado cambia, el componente re-renderiza, y la próxima llamada del agente ve la disponibilidad nueva. El contador sigue diciendo `registered ×1`. En mi corrida, `select_seat({ seat: "12A" })` falló con "Seat 12A is occupied", refresqué, y la misma llamada funcionó, sin un solo registro nuevo.
+
+Una sutileza que conviene saber: **la ref apunta al último render *commiteado***, no al store "ahora". Si el agente muta el store y llama a otra tool antes de que React haga el commit, la ref todavía tiene el closure anterior. Para estado local del componente, es lo mejor que podés tener. Para estado del store, hay algo mejor.
+
+## Pieza 3: las lectoras leen el store, no un endpoint
+
+Cuando el estado vive en un store, ni siquiera necesitás el render. Las tools del carrito en [`cart-tools.js`](https://github.com/khriztianmoreno/khriztianmoreno.dev/blob/main/demos/webmcp-react-state/cart-tools.js) son constantes a nivel de módulo, y `execute` llama a `useTripStore.getState()`, el getter sincrónico de Zustand:
+
+```js
+export const cartTools = {
+  getCartItems: {
+    ...CART_CONTRACTS.getCartItems,
+    execute: async () => cartView(useTripStore.getState()),
+  },
+```
+
+```js
+export function useContractCartTools() {
+  useWebMCPTool(cartTools.getCartItems);
+  useWebMCPTool(cartTools.getTripState);
+  useWebMCPTool(cartTools.addFlightToCart);
+  useWebMCPTool(cartTools.removeFromCart);
+}
+```
+
+`getState()` es el store *ahora*, no el último render. Sin stale closures y sin ir "un commit atrás". Las que mutan hacen lo mismo: `add_flight_to_cart` llama a la misma acción `addToCart` que el botón de la UI, y Zustand avisa a los componentes suscritos. El agente no toca el DOM ni sabe que existe React.
+
+Fijate en lo que **no** está: no hay un `GET /api/cart`. El carrito que lee el agente es el del usuario, en esta pestaña, con lo que acaba de cambiar a mano. En el demo, el agente agrega IB-6584, yo agrego AV-010 a mano y subo los pasajeros a 2, y "Re-read cart" contesta `IB-6584, AV-010 · 2 pax · subtotal $2862`, exactamente lo que está en pantalla. Un endpoint del backend habría contestado con lo que sabía el servidor, que no necesariamente es lo mismo. Es la tesis de la parte 1 aplicada a una SPA: la tool es otra puerta de entrada a la lógica y al estado que ya tenés.
+
+El mismo patrón sirve para Redux (`store.getState()`), Jotai (`store.get(atom)`) o signals (`signal.value`/`peek()`): todo store serio tiene una forma de leer fuera del render. Usala adentro de `execute`.
+
+## Pieza 4: StrictMode y la promesa que tenés que atrapar
+
+Prendé StrictMode en el demo. En desarrollo, React monta cada componente, corre sus efectos, simula un unmount (cleanup) y vuelve a montar. Con nuestro hook, eso es registrar → abortar → registrar para cada tool. Los contadores al montar: **10 registros, 5 abortos, 15 eventos `toolchange`**, y ningún error. Después, los mismos cinco cambios en el carrito lo siguen dejando en 10.
+
+¿Por qué el segundo registro no falla con `InvalidStateError` ("ya existe una tool con ese nombre")? Por el orden del algoritmo de la spec. El chequeo de nombre duplicado es **sincrónico**, y la entrada en el mapa de tools también. Los pasos de aborto corren **sincrónicamente** también, adentro de `controller.abort()`. Así que cuando el segundo montaje de StrictMode llama a `registerTool()`, la primera entrada ya no está. Si el desregistro fuera asincrónico, StrictMode explotaría en cada montaje. La propia spec usa este patrón en un ejemplo: `ac.abort()` seguido inmediatamente de `registerTool()` para actualizar el schema de una tool. Ojo, que ese ejemplo está ahí para advertir una carrera: una ejecución que el agente lanzó justo en ese momento puede apuntar a la tool vieja o a la nueva, y encontrarse con el schema que no esperaba. Otra razón más para no re-registrar en cada render.
+
+Pero hay una segunda consecuencia, y esta sí muerde. La promesa de `registerTool()` no se resuelve de forma sincrónica: se resuelve en una tarea encolada, después de que se dispara `toolchange`. StrictMode aborta **antes** de que corra esa tarea. Y según la spec, abortar rechaza la promesa con el motivo del aborto. Si nadie la atrapa, tenés un rechazo no manejado en cada montaje de desarrollo, uno por tool.
+
+Apagá "Catch registration promise" con StrictMode prendido, y el demo lo muestra en la página (escucha `unhandledrejection` en `window`): **5 rechazos** al montar, todos `AbortError: signal is aborted without reason`. Por eso el hook siempre pasa por esto:
+
+```js
+function registerWithSignal(modelContext, tool, signal, catchRegistration) {
+  const registration = modelContext.registerTool(tool, { signal });
+  if (!catchRegistration) return; // lab toggle: leave the promise unhandled
+  registration.catch((err) => {
+    // Aborting before the promise resolves rejects it with the abort reason.
+    // That's the expected path for StrictMode and fast unmounts.
+    if (err?.name === 'AbortError') return;
+    console.error(`[webmcp] registerTool("${tool.name}") failed:`, err);
+  });
+}
+```
+
+Un `AbortError` es el camino esperado: StrictMode, o un componente que se desmonta antes de que se resuelva su registro (un cambio de ruta rápido, por ejemplo). Cualquier otra cosa (`InvalidStateError` por un nombre duplicado, `NotAllowedError` por la Permissions Policy `tools`, `InvalidStateError` si el documento no está fully active) es un bug de verdad, y lo querés ver. El caso contrario enseña igual: con StrictMode apagado y sin catch, abrir y cerrar el mapa de asientos no produce ningún rechazo, porque el aborto llega *después* de que la promesa se resolvió, y rechazar una promesa ya resuelta no hace nada.
+
+No lo "arregles" apagando StrictMode. StrictMode está haciendo su trabajo: mostrarte que tu efecto no aguanta un unmount en el momento equivocado. En producción ese momento también existe, solo que pasa menos seguido.
+
+## Pieza 5: Next.js, solo del lado del cliente
+
+Si tu SPA es una app de Next.js, hay una regla más: `modelContext` existe solo en `Document`. No hay `document` durante el render en el servidor ni en los React Server Components, así que las tools se registran en el cliente: en un componente `'use client'`, adentro de un efecto.
+
+La trampa es creer que `'use client'` significa "esto corre solo en el navegador". No: los client components también se pre-renderizan en el servidor. Lo que nunca corre en el servidor son **los efectos**. Por eso el hook registra en `useEffect` y nunca toca `document.modelContext` durante el render ni en el nivel superior del módulo. Este snippet **no es parte del demo** (no hay una app de Next en el repo), pero usa el mismo hook y las mismas tools del demo:
+
+```jsx
+'use client';
+
+import { useEffect, useState } from 'react';
+import { WebMCPContext, useWebMCPTool } from './use-webmcp-tool';
+import { cartTools } from './cart-tools';
+
+export function WebMCPProvider({ children }) {
+  const [modelContext, setModelContext] = useState(null);
+
+  // Effects only run in the browser, so `document` exists here.
+  useEffect(() => setModelContext(document.modelContext ?? null), []);
+
+  return (
+    <WebMCPContext.Provider value={{ modelContext, catchRegistration: true }}>
+      {children}
+    </WebMCPContext.Provider>
+  );
+}
+
+export function CartTools() {
+  useWebMCPTool(cartTools.getCartItems);
+  useWebMCPTool(cartTools.addFlightToCart);
+  return null;
+}
+```
+
+En el servidor, `modelContext` es `null` y el `if (!modelContext) return` del hook no hace nada. En el navegador, el provider lo resuelve después de la hidratación y las tools se registran. Como las tools están atadas a componentes, una ruta que no renderiza `<CartTools />` no las expone: la navegación del lado del cliente desmonta el componente, el cleanup aborta, la tool desaparece de la lista y se dispara `toolchange`.
+
+## Pieza 6: el store en un Worker, la tool en el hilo principal
+
+Misma regla, otra consecuencia: si `modelContext` existe solo en `Document`, **un Worker no puede registrar tools.** Hay un [explainer para service workers](https://github.com/webmachinelearning/webmcp/blob/main/docs/service-workers.md) (publicado por primera vez el 28 de agosto de 2025) que propone registrar service workers como proveedores de WebMCP, para que un agente pueda llamar tools sin el sitio abierto. Es una propuesta, no está en la spec, y el demo no la usa.
+
+Lo que sí funciona hoy es un patrón: el estado vive en un Worker, y la tool en el hilo principal es un proxy. En el demo, el calculador de tarifas (impuestos, cargos, precio del asiento) vive en [`fare-worker.js`](https://github.com/khriztianmoreno/khriztianmoreno.dev/blob/main/demos/webmcp-react-state/fare-worker.js), y `quote_fare` le habla por `postMessage`, con ids de request y un timeout. Este es el núcleo de [`fare-client.js`](https://github.com/khriztianmoreno/khriztianmoreno.dev/blob/main/demos/webmcp-react-state/fare-client.js):
+
+```js
+  function request(type, payload, { signal } = {}) {
+    if (signal?.aborted) return Promise.reject(signal.reason);
+
+    const id = nextId++;
+    return new Promise((resolve, reject) => {
+      const onAbort = () => settle(id)?.reject(signal.reason);
+      const timer = setTimeout(() => {
+        settle(id)?.reject(new DOMException(`The fare worker did not answer "${type}" within ${timeoutMs} ms.`, 'TimeoutError'));
+      }, timeoutMs);
+
+      signal?.addEventListener('abort', onAbort, { once: true });
+      pending.set(id, { resolve, reject, timer, cleanup: () => signal?.removeEventListener('abort', onAbort) });
+      worker.postMessage({ id, type, payload });
+    });
+  }
+```
+
+Tres detalles que parecen menores hasta que faltan:
+
+- **El id** empareja cada respuesta con su request. Sin él, dos cotizaciones concurrentes se podrían cruzar.
+- **El timeout** es lo que evita que el agente se quede colgado si el Worker se traba. Marcá "Slow worker (3 s)": `quote_fare` falla a los 1,5 s con `TimeoutError`, y el agente recibe un error claro en vez de una promesa que nunca se resuelve. La respuesta tardía del Worker se descarta, porque su id ya no tiene una entrada pendiente.
+- **El `signal`** es el que recibe `execute`. Si el agente cancela la invocación, también se cancela el request al Worker.
+
+La tool en sí (`quote_fare`) usa el mismo contract hook que las demás. Su `execute` lee el carrito con `getState()` y se lo manda al Worker. La tool es el contrato en el hilo principal; el estado está donde mejor le queda.
+
+## Una advertencia honesta: lo que este demo no prueba
+
+- **Es solo shim.** Todos mis números salen del shim en la página, que alineé con el algoritmo de `registerTool()` en los puntos de los que depende este post: inserción sincrónica en el mapa, chequeo sincrónico de duplicados, aborto → desregistro sincrónico + rechazo, resolución asincrónica y `toolchange`. El demo detecta `document.modelContext` y lo usa si existe, pero **no probé la ruta nativa**. Si la implementación de un navegador difiere de la spec en los tiempos, los números de StrictMode podrían cambiar.
+- **La spec es un Draft Community Group Report**, fuera del standards track. La superficie que describo (sin `unregisterTool()`, el signal como ciclo de vida) es la del texto actual, y puede cambiar.
+- **Cómo reacciona un agente a un `toolchange` en medio de una conversación depende del agente.** La spec define el evento, no qué hace un agente con él. Los 45 eventos del hook ingenuo son un costo del lado de la página; el costo del lado del agente no lo puedo medir.
+- **El explainer de service workers es una propuesta.** El patrón del Worker del demo no depende de él.
+
+## Lo que aprendí armando esto
+
+1. **Una tool es un contrato.** El nombre, la descripción y el schema describen *qué podés hacer*, no *qué hay ahora*. Si el contrato no cambia, el registro tampoco.
+2. **El `AbortSignal` es el ciclo de vida.** No existe `unregisterTool()`, y no te hace falta: un controller por efecto y `abort()` en el cleanup atan la tool al componente, igual que la API declarativa la ata al `<form>`.
+3. **El estado se lee en el momento de la llamada.** `getState()` para stores, una ref para estado local del componente. La pregunta del agente llega después que el render, así que la respuesta también se tiene que calcular después.
+4. **Los tiempos de la spec explican el comportamiento de React.** El desregistro sincrónico es la razón por la que StrictMode no se rompe; la resolución asincrónica es la razón por la que tenés que atrapar la promesa. Leer el algoritmo me ahorró un par de horas de adivinar.
+
+En los próximos posts de la serie vamos a ver cómo invocar formularios desde la API imperativa, cómo diseñar permisos con humano en el loop, y cómo debuggear todo esto con DevTools.
+
+---
+
+### Para seguir explorando
+
+- **La spec de WebMCP:** [webmachinelearning.github.io/webmcp](https://webmachinelearning.github.io/webmcp/). Los algoritmos de `registerTool()` y "unregister a tool" son la base de las piezas 1 y 4.
+- **El explainer de service workers:** [`docs/service-workers.md`](https://github.com/webmachinelearning/webmcp/blob/main/docs/service-workers.md), la propuesta para tools sin una pestaña abierta.
+- **La parte 1 de la serie:** [WebMCP — Por qué los agentes no deberían adivinar cómo funciona tu UI](/es/blog/webmcp-fundamentals), con `registerTool()`, `getTools()` y `executeTool()`.
+- **La parte 2 de la serie:** [Marcado semántico para IA: convertí tus formularios en tools WebMCP sin JavaScript](/es/blog/webmcp-declarative-forms), con la API declarativa.
+- **El demo completo:** [`demos/webmcp-react-state`](https://github.com/khriztianmoreno/khriztianmoreno.dev/tree/main/demos/webmcp-react-state): pasá al hook ingenuo y mirá los contadores, prendé StrictMode sin el catch, y abrí y cerrá el mapa de asientos.
+
+¿Qué store usa tu SPA, y dónde registrarías su primera tool? Me encantaría saberlo. Charlemos por [X/Twitter](https://twitter.com/khriztianmoreno) o [LinkedIn](https://www.linkedin.com/in/khriztianmoreno/).
+
+![Profile](https://res.cloudinary.com/khriztianmoreno/image/upload/c_scale,w_148/v1591324337/KM-brand/stickers/sticker-3_2x.png)

@@ -1,0 +1,259 @@
+/* Tailwind (browser CDN) does the heavy lifting; this is only what's awkward to inline. */
+
+:root {
+  color-scheme: light dark;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+}
+
+/* Counters */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.metrics > div {
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: color-mix(in oklab, currentColor 5%, transparent);
+}
+
+.metrics dt {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.metrics dd {
+  font: 600 1.1rem/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* Live getTools() list */
+.tool-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 0.75rem;
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.75rem;
+  background: color-mix(in oklab, currentColor 4%, transparent);
+  animation: tool-in 0.6s ease-out;
+}
+
+.tool-row code {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.tool-hint {
+  grid-row: 2;
+  opacity: 0.6;
+}
+
+.tool-count {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  opacity: 0.8;
+}
+
+#tool-list:empty::before {
+  content: 'No tools registered.';
+  font-size: 0.75rem;
+  opacity: 0.5;
+}
+
+@keyframes tool-in {
+  from {
+    background: color-mix(in oklab, #8b5cf6 25%, transparent);
+  }
+}
+
+/* Segmented control for the hook mode */
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-radius: 0.75rem;
+  padding: 0.25rem;
+  background: color-mix(in oklab, currentColor 6%, transparent);
+}
+
+.segmented label {
+  cursor: pointer;
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.segmented span {
+  display: block;
+  border-radius: 0.5rem;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.segmented input:checked + span {
+  background: #4f46e5;
+  color: white;
+}
+
+.segmented input:focus-visible + span {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+.mode-hint {
+  display: none;
+}
+
+[data-mode='contract'] .mode-hint[data-for='contract'],
+[data-mode='naive'] .mode-hint[data-for='naive'],
+[data-mode='stale'] .mode-hint[data-for='stale'] {
+  display: block;
+}
+
+/* Toggle switch (same look as part 1's redesign toggle) */
+.switch {
+  display: inline-flex;
+  cursor: pointer;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.switch-track {
+  position: relative;
+  height: 1.5rem;
+  width: 2.75rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: #cbd5e1;
+  transition: background 0.15s;
+}
+
+.switch-track::after {
+  content: '';
+  position: absolute;
+  left: 0.125rem;
+  top: 0.125rem;
+  height: 1.25rem;
+  width: 1.25rem;
+  border-radius: 9999px;
+  background: white;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+  transition: transform 0.15s;
+}
+
+.switch input:checked + .switch-track {
+  background: #c026d3;
+}
+
+.switch input:checked + .switch-track::after {
+  transform: translateX(1.25rem);
+}
+
+.switch input:focus-visible + .switch-track {
+  box-shadow: 0 0 0 2px color-mix(in oklab, #d946ef 50%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  .switch-track {
+    background: #334155;
+  }
+}
+
+/* Seat map */
+.seat {
+  border-radius: 0.375rem;
+  padding: 0.3rem 0;
+  font: 600 0.7rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: color-mix(in oklab, currentColor 6%, transparent);
+}
+
+.seat:hover:not(:disabled) {
+  background: color-mix(in oklab, #6366f1 25%, transparent);
+}
+
+.seat:disabled {
+  opacity: 0.3;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.seat-selected,
+.seat-selected:hover:not(:disabled) {
+  background: #4f46e5;
+  color: white;
+}
+
+/* Agent */
+.run-btn {
+  width: 100%;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+}
+
+.run-btn:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+.log {
+  margin-top: 1rem;
+  max-height: 20rem;
+  overflow: auto;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background: color-mix(in oklab, currentColor 4%, transparent);
+  font: 0.75rem/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.log:empty::before {
+  content: 'Waiting for a run…';
+  opacity: 0.5;
+}
+
+.log-line {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  gap: 0 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+.log-tag {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  line-height: 1.85;
+}
+
+.log-json > details {
+  grid-column: 2;
+}
+
+.log-json summary {
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+.log-json pre {
+  margin: 0.25rem 0 0.5rem;
+  white-space: pre-wrap;
+  opacity: 0.85;
+}

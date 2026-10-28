@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WebMCP + React state: hooks and stores — demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+    <!--
+      No build step. React's development build is used on purpose: StrictMode
+      only double-mounts effects in development, and that is half the lesson.
+    -->
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@19.2.7?dev",
+          "react-dom/client": "https://esm.sh/react-dom@19.2.7/client?dev&external=react",
+          "zustand": "https://esm.sh/zustand@5.0.15?external=react",
+          "htm": "https://esm.sh/htm@3.1.1"
+        }
+      }
+    </script>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
+    <div class="mx-auto max-w-6xl px-4 py-8 sm:py-10">
+      <header class="max-w-3xl">
+        <p class="text-xs font-semibold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">WebMCP · part 3</p>
+        <h1 class="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">A tool is a contract, not a snapshot of state</h1>
+        <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+          A React trip cart whose state lives in a Zustand store. Its WebMCP tools are registered once per component
+          lifetime, unregistered by aborting a signal on unmount, and read live state inside <code>execute</code>.
+          Switch the hook to see the two ways it goes wrong. Companion demo for
+          <a class="font-medium text-indigo-600 underline-offset-2 hover:underline dark:text-indigo-400" href="https://www.khriztianmoreno.dev/blog/webmcp-react-state">the blog post</a>
+          — see <a class="font-medium text-indigo-600 underline-offset-2 hover:underline dark:text-indigo-400" href="./README.md">README.md</a>.
+        </p>
+      </header>
+
+      <!-- Goal + runtime -->
+      <section class="mt-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500">Agent goal</p>
+        <p id="goal" class="mt-0.5 text-sm font-medium"></p>
+        <p class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+          <span
+            id="runtime"
+            class="rounded-full bg-slate-100 px-2 py-0.5 font-mono font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300 data-[kind=native]:bg-emerald-100 data-[kind=native]:text-emerald-800 dark:data-[kind=native]:bg-emerald-950 dark:data-[kind=native]:text-emerald-300 data-[kind=shim]:bg-amber-100 data-[kind=shim]:text-amber-800 dark:data-[kind=shim]:bg-amber-950 dark:data-[kind=shim]:text-amber-300"
+            >detecting…</span
+          >
+          <span id="tool-count"></span>
+        </p>
+        <p id="runtime-note" class="mt-1 text-xs text-amber-700 dark:text-amber-400"></p>
+      </section>
+
+      <!-- Lab controls -->
+      <section class="mt-4 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:flex-row lg:items-end lg:justify-between dark:border-slate-800 dark:bg-slate-900" aria-label="Lab settings">
+        <fieldset class="min-w-0">
+          <legend class="text-xs font-medium uppercase tracking-wide text-slate-500">How &lt;TripCart&gt; registers its tools</legend>
+          <div class="segmented mt-2">
+            <label><input type="radio" name="hook-mode" value="contract" checked data-lab-setting /><span>Contract hook</span></label>
+            <label><input type="radio" name="hook-mode" value="naive" data-lab-setting /><span>Naive hook</span></label>
+            <label><input type="radio" name="hook-mode" value="stale" data-lab-setting /><span>Stale closure</span></label>
+          </div>
+          <p class="mode-hint mt-2 text-xs text-slate-500" data-for="contract">Effect deps = the contract. <code>execute</code> reads the store at call time.</p>
+          <p class="mode-hint mt-2 text-xs text-slate-500" data-for="naive">Tool object rebuilt every render and used as the effect dep: abort + register on every render.</p>
+          <p class="mode-hint mt-2 text-xs text-slate-500" data-for="stale">Empty deps: registered once, but <code>execute</code> returns the first render's cart forever.</p>
+        </fieldset>
+
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <label class="switch">
+            <input id="strict-mode" type="checkbox" class="peer sr-only" data-lab-setting />
+            <span class="switch-track"></span>
+            StrictMode
+          </label>
+          <label class="switch">
+            <input id="catch-registration" type="checkbox" class="peer sr-only" checked data-lab-setting />
+            <span class="switch-track"></span>
+            Catch registration promise
+          </label>
+          <button
+            id="reset"
+            class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
+          >
+            Reset
+          </button>
+        </div>
+      </section>
+
+      <main class="mt-6 grid gap-6 lg:grid-cols-2">
+        <!-- The React app -->
+        <section class="min-w-0">
+          <h2 class="mb-2 text-sm font-semibold text-slate-500">The app (React + Zustand)</h2>
+          <div id="app"></div>
+        </section>
+
+        <section class="flex min-w-0 flex-col gap-6">
+          <!-- Counters -->
+          <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <h2 class="font-semibold">Renders vs. registrations</h2>
+            <p class="mt-0.5 text-xs text-slate-500">Reset every time a lab setting remounts the React root.</p>
+            <dl class="metrics">
+              <div><dt>&lt;TripCart&gt; commits</dt><dd data-counter="renders">0</dd></div>
+              <div><dt>registerTool() calls</dt><dd data-counter="registrations">0</dd></div>
+              <div><dt>Signals aborted</dt><dd data-counter="aborts">0</dd></div>
+              <div><dt>toolchange events</dt><dd data-counter="toolchanges">0</dd></div>
+              <div><dt>Unhandled rejections</dt><dd data-counter="unhandled">0</dd></div>
+            </dl>
+            <div data-alerts hidden class="rounded-xl border border-rose-300 bg-rose-50 p-3 text-xs text-rose-800 dark:border-rose-900 dark:bg-rose-950/60 dark:text-rose-300">
+              <p class="font-semibold">Unhandled promise rejections (from the <code>unhandledrejection</code> event)</p>
+              <ul id="unhandled-list" class="mt-1 list-disc pl-4 font-mono"></ul>
+            </div>
+
+            <h3 class="mt-4 text-sm font-semibold">Live <code>getTools()</code></h3>
+            <ul id="tool-list" class="mt-2 flex flex-col gap-1"></ul>
+          </article>
+
+          <!-- Agent -->
+          <article id="agent-panel" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h2 class="font-semibold">Simulated agent</h2>
+                <p class="mt-0.5 text-xs text-slate-500"><code>getTools()</code> → <code>executeTool()</code>. No LLM, no DOM access.</p>
+              </div>
+              <span data-status></span>
+            </div>
+            <div class="mt-4 grid gap-2 sm:grid-cols-2">
+              <button id="run-agent" class="run-btn bg-violet-600 hover:bg-violet-500">Run agent</button>
+              <button id="reread-cart" class="run-btn bg-indigo-600 hover:bg-indigo-500">Re-read cart (get_cart_items)</button>
+            </div>
+            <p class="mt-2 text-xs text-slate-500">Change the cart by hand, then re-read it: the agent gets whatever <code>execute</code> reads at call time.</p>
+            <ol data-log class="log"></ol>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="main.js"></script>
+  </body>
+</html>
