@@ -795,21 +795,19 @@
   /* ─── Post body code blocks (rehype-pretty-code / Shiki) ───
      rehype-pretty-code wraps every fenced code block in
      `figure[data-rehype-pretty-code-figure] > pre > code`, with one
-     `span[data-line]` per source line. `PostBody`'s client-side effect
-     wraps each figure in a `.code-window` at mount, giving it a macOS-style
+     `span[data-line]` per source line. The `CodeWindow` MDX component
+     wraps each figure in a `.code-window`, giving it a macOS-style
      titlebar (traffic-light dots, language label, copy button) — this CSS
      styles that wrapper as the glass card (matching `.glass-card` /
      `prose-pre:glass-card`) instead of Shiki's own theme background
-     (disabled via `keepBackground: false` in src/lib/blog/markdown.ts), so
+     (disabled via `keepBackground: false` in src/lib/blog/mdx.tsx), so
      blocks read as part of the site's UI rather than a jarring rectangle
      dropped from the theme. Long lines scroll horizontally within the pre
      only — Astro's old `wrap: true` is replicated as a deliberate choice
      for scroll-not-wrap, since wrapped long lines (URLs, long import
      paths) are harder to read than a horizontally-scrollable block that
-     stays legible at its intended line length. Before JS hydrates,
-     `[data-rehype-pretty-code-figure]` alone still renders a legible (if
-     chrome-less) card — the titlebar is progressive enhancement, not load
-     bearing for readability. */
+     stays legible at its intended line length. The titlebar is
+     server-rendered; only the copy button needs JS. */
   .prose [data-rehype-pretty-code-figure] {
     /* !important: @tailwindcss/typography sets `.prose figure` margin via a
        `:where()` selector (zero specificity) but in a cascade layer that

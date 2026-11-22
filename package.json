@@ -4,8 +4,8 @@
   "private": false,
   "packageManager": "pnpm@11.9.0",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/copy-demos.js && next dev",
+    "build": "node scripts/copy-demos.js && next build",
     "start": "next start",
     "lint": "next lint",
     "new": "node scripts/new.js"
@@ -23,6 +23,7 @@
     "mdast-util-to-string": "^4.0.0",
     "minimist": "^1.2.8",
     "next": "^16.2.7",
+    "next-mdx-remote-client": "^2.1.12",
     "prop-types": "15.7.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
