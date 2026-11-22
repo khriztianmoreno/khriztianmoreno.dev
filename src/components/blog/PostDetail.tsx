@@ -6,6 +6,7 @@ import Heading from '@/components/common/Heading';
 import { type Lang, type Post } from '@/lib/blog/schema';
 import { getFormattedDate } from '@/lib/blog/date';
 import { renderPost } from '@/lib/blog/mdx';
+import BlogBuddies from './buddies/BlogBuddies';
 import Comments from './Comments';
 import { getBlogTranslations } from './i18n';
 import { blogIndexHref, tagHref } from './paths';
@@ -71,7 +72,7 @@ const PostDetail = async ({ lang, post }: PostDetailProps) => {
           </FadeIn>
 
           <FadeIn>
-            <div className="prose prose-invert max-w-200 prose-headings:font-display prose-a:text-primary prose-code:text-tertiary prose-pre:glass-card">
+            <div data-post-body className="prose prose-invert max-w-200 prose-headings:font-display prose-a:text-primary prose-code:text-tertiary prose-pre:glass-card">
               {content}
             </div>
             <Comments lang={lang} />
@@ -79,6 +80,7 @@ const PostDetail = async ({ lang, post }: PostDetailProps) => {
 
           <TableOfContents headings={headings} eyebrow={t('tableOfContents')} />
         </div>
+        <BlogBuddies key={post.slug} lang={lang} />
       </Container>
     </article>
   );
