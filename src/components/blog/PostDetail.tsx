@@ -5,11 +5,10 @@ import FadeIn from '@/components/common/FadeIn';
 import Heading from '@/components/common/Heading';
 import { type Lang, type Post } from '@/lib/blog/schema';
 import { getFormattedDate } from '@/lib/blog/date';
-import { renderMarkdown } from '@/lib/blog/markdown';
+import { renderPost } from '@/lib/blog/mdx';
 import Comments from './Comments';
 import { getBlogTranslations } from './i18n';
 import { blogIndexHref, tagHref } from './paths';
-import PostBody from './PostBody';
 import TableOfContents from './TableOfContents';
 import { getTagAccentClass } from './tagAccent';
 
@@ -20,7 +19,7 @@ interface PostDetailProps {
 
 const PostDetail = async ({ lang, post }: PostDetailProps) => {
   const t = getBlogTranslations(lang);
-  const { html, headings } = await renderMarkdown(post.body);
+  const { content, headings } = await renderPost(post.body);
   const publishedDate = getFormattedDate(post.data.date);
   const updatedDate = post.data.updated
     ? getFormattedDate(post.data.updated)
@@ -72,10 +71,9 @@ const PostDetail = async ({ lang, post }: PostDetailProps) => {
           </FadeIn>
 
           <FadeIn>
-            <PostBody
-              html={html}
-              className="prose prose-invert max-w-200 prose-headings:font-display prose-a:text-primary prose-code:text-tertiary prose-pre:glass-card"
-            />
+            <div className="prose prose-invert max-w-200 prose-headings:font-display prose-a:text-primary prose-code:text-tertiary prose-pre:glass-card">
+              {content}
+            </div>
             <Comments lang={lang} />
           </FadeIn>
 

@@ -23,7 +23,7 @@ function postsDirForLang(lang: Lang): string {
   return path.join(CONTENT_ROOT, lang);
 }
 
-/** Derives a slug from a post's filename (basename minus `.md`). No
+/** Derives a slug from a post's filename (basename minus `.mdx`). No
  * encoding/escaping is applied here — filenames may contain characters
  * like `(`, `)`, `:`, `"`, `'` and `fs.readdirSync`/`path.basename` pass
  * them through untouched. Callers that build URLs must percent-encode the
@@ -35,14 +35,14 @@ function slugFromFilename(filename: string): string {
 
 let cache: Map<Lang, Post[]> | null = null;
 
-/** Reads and validates every post markdown file for a given language. Results are cached per-process (this only runs at build time / on the server). */
+/** Reads and validates every post MDX file for a given language. Results are cached per-process (this only runs at build time / on the server). */
 function readPostsForLang(lang: Lang): Post[] {
   const dir = postsDirForLang(lang);
   if (!fs.existsSync(dir)) {
     return [];
   }
 
-  const filenames = fs.readdirSync(dir).filter((name) => name.endsWith('.md'));
+  const filenames = fs.readdirSync(dir).filter((name) => name.endsWith('.mdx'));
 
   return filenames.map((filename) => {
     const fullPath = path.join(dir, filename);

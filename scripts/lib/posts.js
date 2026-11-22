@@ -14,6 +14,13 @@ const SITE_URL = 'https://khriztianmoreno.dev';
 const DEVTO_USERNAME = 'khriztianmoreno';
 const EN_POSTS_DIR = path.join(process.cwd(), 'content', 'posts', 'en');
 
+/** The excerpt marker as written in MDX posts (an MDX comment), plus the
+ * legacy HTML-comment form. dev.to and Hashnode render plain markdown, where
+ * the MDX comment would show up as literal text, so it's stripped from the
+ * body before cross-posting. Keep in sync with MORE_MARK_RE in
+ * src/lib/blog/markdown.ts. */
+const MORE_MARK_LINE_RE = /^[ \t]*(?:\{\s*\/\*\s*more\s*\*\/\s*\}|<!--\s*more\s*-->)[ \t]*\r?\n?/gm;
+
 /** Normalizes a title for cross-language-safe comparison: lowercased,
  * accent-stripped, reduced to letters/digits. "React useEffect" -> "reactuseeffect". */
 function normalizeTitle(title) {
@@ -24,7 +31,7 @@ function normalizeTitle(title) {
     .replace(/[^a-z0-9]/g, '');
 }
 
-/** Slug = filename without `.md` (mirrors src/lib/blog/posts.ts). */
+/** Slug = filename without `.mdx` (mirrors src/lib/blog/posts.ts). */
 function slugFromFilename(filename) {
   return filename.slice(0, -path.extname(filename).length);
 }
@@ -75,7 +82,7 @@ function listEnglishPosts({ order = 'date' } = {}) {
 
   const filenames = fs
     .readdirSync(EN_POSTS_DIR)
-    .filter((name) => name.endsWith('.md'))
+    .filter((name) => name.endsWith('.mdx'))
     .sort();
 
   const posts = filenames.map((filename) => {
@@ -88,7 +95,7 @@ function listEnglishPosts({ order = 'date' } = {}) {
       title: data.title ?? slug,
       tags: Array.isArray(data.tags) ? data.tags : [],
       canonical: canonicalUrl(slug),
-      body: content.replace(/^\s+/, ''),
+      body: content.replace(MORE_MARK_LINE_RE, '').replace(/^\s+/, ''),
       date: data.date ?? null,
       ts: dateToTimestamp(data.date),
     };

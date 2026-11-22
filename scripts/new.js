@@ -2,7 +2,7 @@
  * Create a new post in the content directory.
  *
  * Ported from the Astro source project's `scripts/new.js`, retargeted at
- * this repo's `content/posts/<lang>/<slug>.md` layout (was
+ * this repo's `content/posts/<lang>/<slug>.mdx` layout (was
  * `src/content/posts/<lang>/<slug>.md` in Astro).
  *
  * Usage: pnpm new [options] <post-title>
@@ -10,7 +10,6 @@
  * Options:
  *   -l, --lang <en|es>   Set the language (default: en)
  *   -d, --draft          Create a draft post (default: false)
- *   -m, --mdx            Use MDX format (default: false)
  *   -h, --help           Show this help message
  *
  * Example:
@@ -48,7 +47,6 @@ const HELP_INFO = `Usage: pnpm new [options] <post-title>
 Options:
   -l, --lang <en|es>   Set the language (default: en)
   -d, --draft          Create a draft post (default: false)
-  -m, --mdx            Use MDX format (default: false)
   -h, --help           Show this help message
 
 Example:
@@ -59,16 +57,14 @@ const TARGET_DIR = "./content/";
 
 const args = minimist(process.argv.slice(2), {
 	string: ["lang"],
-	boolean: ["draft", "mdx", "help"],
+	boolean: ["draft", "help"],
 	default: {
 		lang: "en",
 		draft: false,
-		mdx: false,
 	},
 	alias: {
 		l: "lang",
 		d: "draft",
-		m: "mdx",
 		h: "help",
 	},
 });
@@ -84,7 +80,7 @@ if (!postTitle || postTitle.trim() === "") {
 }
 console.log("Creating new post:", postTitle);
 
-const fileExtension = args.mdx ? ".mdx" : ".md";
+const fileExtension = ".mdx";
 const fileName = getPostSlug(postTitle) + fileExtension;
 const fileTypeDir = args.draft ? "drafts" : "posts";
 const fileLangDir = args.lang;
@@ -108,7 +104,7 @@ updated: ${getDate()}
 
 Write your description here.
 
-<!--more-->
+{/* more */}
 
 Write your content here.
 `;
