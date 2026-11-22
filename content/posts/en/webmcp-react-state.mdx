@@ -47,6 +47,14 @@ In my runs (headless Chrome 155, using the shim), with the same five changes (ad
 2. **Naive hook:** the same 6 commits, but **25 registrations, 20 aborts, and 45 `toolchange` events**. Every cart tool shows `registered ×6`.
 3. **Stale closure:** 5 registrations, all calm... and when the agent reads the cart after you've added a flight by hand, it gets **an empty cart**.
 
+Here it is, live. Switch between the three registration modes, toggle StrictMode, and watch the counters:
+
+<LiveDemo
+  name="webmcp-react-state"
+  title="Trip cart: WebMCP with React state demo"
+  caption="The real demo from the repo, running in your browser. React, Zustand and htm load from esm.sh; tools go through an in-page shim."
+/>
+
 ## The problem: the tool as a snapshot
 
 Here's how most of us would write it on the first try. The component already has the state at hand, so you build the tool right there and register it in an effect:

@@ -42,6 +42,15 @@ Ninguno de los dos usa un LLM de verdad: los planes están hard-codeados para qu
 
 Sobre esos números, siendo honesto: son aproximados. El contador mide **caracteres, no tokens** (la estimación de tokens que muestra el panel es simplemente caracteres ÷ 4), y además **subestima** el costo de la actuación: un agente real manda capturas de pantalla o el árbol de accesibilidad de toda la página, no solo el `outerHTML` del contenedor de la app. Y medí solo el camino del shim; la ruta nativa de Chrome no la probé.
 
+Acá lo tenés en vivo. Corré los dos agentes, activá **Ship UI redesign** y volvé a correrlos:
+
+<LiveDemo
+  name="webmcp-fundamentals"
+  title="SkyFare: demo de fundamentos de WebMCP"
+  caption="El demo real del repo, corriendo en tu navegador. Las tools pasan por un shim dentro de la página, salvo que tu navegador exponga document.modelContext."
+  openLabel="Abrir en otra pestaña"
+/>
+
 ## El problema: el agente adivina
 
 Un agente que opera tu UI "desde afuera" tiene que resolver dos problemas a la vez, y los dos son frágiles:

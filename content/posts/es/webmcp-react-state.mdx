@@ -47,6 +47,15 @@ En mis corridas (Chrome 155 headless, con el shim), con los mismos cinco cambios
 2. **Naive hook:** los mismos 6 commits, pero **25 registros, 20 abortos y 45 eventos `toolchange`**. Cada tool del carrito dice `registered ×6`.
 3. **Stale closure:** 5 registros, todo tranquilo... y cuando el agente lee el carrito después de que agregaste un vuelo a mano, recibe **un carrito vacío**.
 
+Acá lo tenés en vivo. Cambiá entre los tres modos de registro, prendé StrictMode y mirá los contadores:
+
+<LiveDemo
+  name="webmcp-react-state"
+  title="Carrito de viaje: demo de WebMCP con estado de React"
+  caption="El demo real del repo, corriendo en tu navegador. React, Zustand y htm cargan desde esm.sh; las tools pasan por un shim dentro de la página."
+  openLabel="Abrir en otra pestaña"
+/>
+
 ## El problema: la tool como snapshot
 
 Así lo escribiríamos casi todos en el primer intento. El componente ya tiene el estado a mano, así que armás la tool ahí mismo y la registrás en un efecto:

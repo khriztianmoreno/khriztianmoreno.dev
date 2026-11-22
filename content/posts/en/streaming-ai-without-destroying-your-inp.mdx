@@ -17,11 +17,11 @@ Your AI feature is the new INP culprit.
 
 For years, the usual suspects for a bad [Interaction to Next Paint](https://web.dev/articles/inp) score were the same: bloated bundles, unthrottled scroll handlers, a chart library re-rendering on every mouse move. Now there's a new one, and it's the feature everyone is shipping right now — streaming a language model's answer straight into the DOM.
 
-This post has a full, runnable demo behind it — [`demos/streaming-ai-without-destroying-your-inp`](https://github.com/khriztianmoreno/khriztianmoreno.dev/tree/main/demos/streaming-ai-without-destroying-your-inp), in the repo that powers this site. It needs Chrome flags most readers won't have enabled, so there's no hosted version to click into — clone it (or just read the files on GitHub) and run it locally per the [README](https://github.com/khriztianmoreno/khriztianmoreno.dev/blob/main/demos/streaming-ai-without-destroying-your-inp/README.md). Rather than pasting isolated snippets, I'm going to walk through the actual files: a naive implementation that wrecks your INP, and an optimized one that doesn't, both wired to a live INP readout so the difference is something you can watch happen, not just take my word for.
+This post has a full, runnable demo behind it — [`demos/streaming-ai-without-destroying-your-inp`](https://github.com/khriztianmoreno/khriztianmoreno.dev/tree/main/demos/streaming-ai-without-destroying-your-inp), in the repo that powers this site. It needs Chrome flags most readers won't have enabled, but it's embedded live further down: if your browser has the Prompt API, you can try it right here. Otherwise, clone it (or just read the files on GitHub) and run it locally per the [README](https://github.com/khriztianmoreno/khriztianmoreno.dev/blob/main/demos/streaming-ai-without-destroying-your-inp/README.md). Rather than pasting isolated snippets, I'm going to walk through the actual files: a naive implementation that wrecks your INP, and an optimized one that doesn't, both wired to a live INP readout so the difference is something you can watch happen, not just take my word for.
 
 ## How the demo works
 
-Run it locally and you'll see three things: a prompt box with a strategy switch above it, an output area, and an INP log below. The flow is:
+Open it and you'll see three things: a prompt box with a strategy switch above it, an output area, and an INP log below. The flow is:
 
 1. **Pick a strategy** — "Naive (per-chunk, no yield)" or "Optimized (sentence batching + yield)" — with the same prompt in both.
 2. **Hit Generate.** The model starts streaming into the output area using whichever strategy you picked.
@@ -30,6 +30,14 @@ Run it locally and you'll see three things: a prompt box with a strategy switch 
 5. **Hit Stop** any time to see the `AbortController` actually cancel the in-flight generation, instead of leaving a zombie session writing to a component nobody's looking at anymore.
 
 Run the naive strategy first, mash the probe button, and watch the log fill with high numbers. Then switch to optimized, same prompt, and watch the same clicks come back low. That side-by-side is the whole point of the demo.
+
+Here it is, live. It needs a desktop Chrome with the Prompt API turned on; if `LanguageModel` isn't available, the demo tells you so:
+
+<LiveDemo
+  name="streaming-ai-without-destroying-your-inp"
+  title="Streaming AI without destroying your INP demo"
+  caption="The real demo from the repo, running in your browser. It needs Chrome with the Prompt API enabled."
+/>
 
 ## Why streaming text breaks INP
 

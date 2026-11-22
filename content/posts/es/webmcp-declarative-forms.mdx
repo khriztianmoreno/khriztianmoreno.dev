@@ -39,6 +39,15 @@ La app es otra vez SkyFare, pero ahora no hay ningún `registerTool()`. Son **do
 
 Al lado hay dos paneles. Uno es un **agente simulado** (sin LLM, como en la parte 1: el plan está hard-codeado) con el objetivo *encontrar el vuelo sin escalas más barato BOG → MAD para 2 pasajeros y reservarlo para Ana Gómez*. El otro es un **inspector de schemas** que muestra, en vivo, el JSON Schema que sale de cada formulario.
 
+Acá lo tenés en vivo. Dale a **Run agent**, llená los formularios vos, o dejá al agente esperando en la reserva y probá los tres caminos de cancelación:
+
+<LiveDemo
+  name="webmcp-declarative-forms"
+  title="SkyFare: demo de formularios declarativos de WebMCP"
+  caption="El demo real del repo, corriendo en tu navegador. El comportamiento declarativo lo pone un shim dentro de la página."
+  openLabel="Abrir en otra pestaña"
+/>
+
 En mis corridas (Chrome 154 headless, con el shim):
 
 1. **El agente descubre 2 tools** a partir del markup, sin que la página registre nada.

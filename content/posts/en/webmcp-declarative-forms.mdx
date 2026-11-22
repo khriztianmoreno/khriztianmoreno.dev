@@ -39,6 +39,14 @@ The app is SkyFare again, but this time there's no `registerTool()` anywhere. It
 
 Next to them are two panels. One is a **simulated agent** (no LLM, same as part 1: the plan is hard-coded) with the goal *find the cheapest nonstop flight BOG → MAD for 2 passengers and book it for Ana Gómez*. The other is a **schema inspector** that shows, live, the JSON Schema that comes out of each form.
 
+Here it is, live. Hit **Run agent**, fill the forms yourself, or leave the agent waiting on the booking form and try the three ways to cancel:
+
+<LiveDemo
+  name="webmcp-declarative-forms"
+  title="SkyFare: WebMCP declarative forms demo"
+  caption="The real demo from the repo, running in your browser. The declarative behavior comes from an in-page shim."
+/>
+
 In my runs (headless Chrome 154, using the shim):
 
 1. **The agent discovers 2 tools** from the markup, without the page registering anything.

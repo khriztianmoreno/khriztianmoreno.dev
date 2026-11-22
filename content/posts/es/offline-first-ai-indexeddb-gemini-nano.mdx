@@ -60,6 +60,15 @@ Como se ve en el video de arriba, esa es justo la prueba que hago: proceso la no
 
 Sacó "4.2 bar" de una nota que nunca había visto en *esta* carga de página — solo en el historial de IndexedDB restaurado a la sesión al arrancar.
 
+Acá lo tenés en vivo. Necesita un Chrome de escritorio con la Prompt API encendida; si `LanguageModel` no está disponible, el demo te lo avisa:
+
+<LiveDemo
+  name="offline-first-ai-indexeddb-gemini-nano"
+  title="FieldTech Zero: demo de IA offline-first"
+  caption="El demo real del repo, corriendo en tu navegador. Necesita Chrome con la Prompt API activada; el fallback a la nube no está desplegado."
+  openLabel="Abrir en otra pestaña"
+/>
+
 ## El problema: una sesión de Gemini Nano no sobrevive a una recarga
 
 `LanguageModel.create()` te da un objeto de sesión que vive en memoria. Refrescás la pestaña y desaparece — junto con todo lo que el usuario le contó. Para un juguete de chat eso molesta un poco. Para una herramienta de campo donde el teléfono del técnico se bloquea solo entre inspecciones, o la pestaña queda en segundo plano y se mata, es un problema serio: la app se olvida con quién está hablando y por qué.

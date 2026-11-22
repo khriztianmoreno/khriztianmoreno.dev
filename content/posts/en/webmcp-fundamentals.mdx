@@ -42,6 +42,14 @@ Neither one uses a real LLM: the plans are hard-coded so the run is deterministi
 
 To be upfront about those numbers: they're approximate. The counter measures **characters, not tokens** (the token estimate in the panel is just characters ÷ 4), and it actually **undercounts** actuation: a real agent sends screenshots or the accessibility tree of the whole page, not just the `outerHTML` of the app container. And I only measured the shim path; I haven't tested Chrome's native implementation.
 
+Here it is, live. Run both agents, flip **Ship UI redesign**, and run them again:
+
+<LiveDemo
+  name="webmcp-fundamentals"
+  title="SkyFare: WebMCP fundamentals demo"
+  caption="The real demo from the repo, running in your browser. Tools go through an in-page shim unless your browser exposes document.modelContext."
+/>
+
 ## The problem: the agent is guessing
 
 An agent driving your UI "from the outside" has to solve two problems at once, and both are fragile:

@@ -8,6 +8,9 @@
 # testing
 /coverage
 
+# live demos copied from demos/ by scripts/copy-demos.js
+/public/demos/
+
 # next.js
 /.next/
 /out/

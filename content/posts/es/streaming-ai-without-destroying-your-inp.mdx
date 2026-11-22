@@ -17,11 +17,11 @@ Tu feature de IA es el nuevo culpable de tu INP.
 
 Durante años, los sospechosos habituales de un mal puntaje de [Interaction to Next Paint](https://web.dev/articles/inp) eran siempre los mismos: bundles pesados, handlers de scroll sin throttle, una librería de gráficos re-renderizando en cada movimiento del mouse. Ahora hay uno nuevo, y es la feature que todo el mundo está lanzando en este momento: hacer streaming de la respuesta de un modelo de lenguaje directo al DOM.
 
-Este post tiene detrás un demo completo y ejecutable — [`demos/streaming-ai-without-destroying-your-inp`](https://github.com/khriztianmoreno/khriztianmoreno.dev/tree/main/demos/streaming-ai-without-destroying-your-inp), en el repositorio de este mismo sitio. Necesita flags de Chrome que la mayoría de los lectores no va a tener activados, así que no hay una versión alojada para abrir con un clic — cloná el repo (o simplemente leé los archivos en GitHub) y corrélo localmente según el [README](https://github.com/khriztianmoreno/khriztianmoreno.dev/blob/main/demos/streaming-ai-without-destroying-your-inp/README.md). En lugar de pegar snippets sueltos, voy a recorrer los archivos reales: una implementación ingenua que destruye tu INP, y una optimizada que no, ambas conectadas a un indicador de INP en vivo para que la diferencia sea algo que puedas ver pasar, no solo algo que te cuento.
+Este post tiene detrás un demo completo y ejecutable — [`demos/streaming-ai-without-destroying-your-inp`](https://github.com/khriztianmoreno/khriztianmoreno.dev/tree/main/demos/streaming-ai-without-destroying-your-inp), en el repositorio de este mismo sitio. Necesita flags de Chrome que la mayoría de los lectores no va a tener activados, pero está embebido en vivo más abajo: si tu navegador tiene la Prompt API, lo podés probar acá mismo. Si no, cloná el repo (o simplemente leé los archivos en GitHub) y corrélo localmente según el [README](https://github.com/khriztianmoreno/khriztianmoreno.dev/blob/main/demos/streaming-ai-without-destroying-your-inp/README.md). En lugar de pegar snippets sueltos, voy a recorrer los archivos reales: una implementación ingenua que destruye tu INP, y una optimizada que no, ambas conectadas a un indicador de INP en vivo para que la diferencia sea algo que puedas ver pasar, no solo algo que te cuento.
 
 ## Cómo funciona el demo
 
-Corrélo localmente y vas a ver tres cosas: un cuadro de prompt con un selector de estrategia arriba, un área de salida, y un log de INP debajo. El flujo es:
+Abrilo y vas a ver tres cosas: un cuadro de prompt con un selector de estrategia arriba, un área de salida, y un log de INP debajo. El flujo es:
 
 1. **Elegí una estrategia** — "Naive (per-chunk, no yield)" u "Optimized (sentence batching + yield)" — con el mismo prompt en ambas.
 2. **Apretá Generate.** El modelo empieza a hacer streaming al área de salida usando la estrategia que elegiste.
@@ -30,6 +30,15 @@ Corrélo localmente y vas a ver tres cosas: un cuadro de prompt con un selector 
 5. **Apretá Stop** en cualquier momento para ver al `AbortController` cancelar de verdad la generación en curso, en lugar de dejar una sesión zombie escribiéndole a un componente que ya nadie está mirando.
 
 Corré primero la estrategia ingenua, machacá el botón de prueba, y mirá el log llenarse de números altos. Después cambiá a la optimizada, mismo prompt, y mirá esos mismos clics volver bajos. Esa comparación lado a lado es todo el punto del demo.
+
+Acá lo tenés en vivo. Necesita un Chrome de escritorio con la Prompt API encendida; si `LanguageModel` no está disponible, el demo te lo avisa:
+
+<LiveDemo
+  name="streaming-ai-without-destroying-your-inp"
+  title="Demo de streaming de IA sin destruir tu INP"
+  caption="El demo real del repo, corriendo en tu navegador. Necesita Chrome con la Prompt API activada."
+  openLabel="Abrir en otra pestaña"
+/>
 
 ## Por qué el streaming de texto rompe el INP
 

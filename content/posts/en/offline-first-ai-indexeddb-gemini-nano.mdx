@@ -60,6 +60,14 @@ As you can see in the video above, that's exactly the test: process the pump not
 
 It pulled "4.2 bar" out of a note it had never seen in *this* page load — only in the IndexedDB history restored into the session on boot.
 
+Here it is, live. It needs a desktop Chrome with the Prompt API turned on; if `LanguageModel` isn't available, the demo tells you so:
+
+<LiveDemo
+  name="offline-first-ai-indexeddb-gemini-nano"
+  title="FieldTech Zero: offline-first AI demo"
+  caption="The real demo from the repo, running in your browser. It needs Chrome with the Prompt API enabled; the cloud fallback is not deployed."
+/>
+
 ## The problem: a Gemini Nano session doesn't survive a reload
 
 `LanguageModel.create()` gives you a session object that lives in memory. Refresh the tab and it's gone — along with everything the user told it. For a chat toy that's mildly annoying. For a field tool where the technician's phone locks itself between inspections, or the tab gets backgrounded and killed, it's a dealbreaker: the app forgets who it's talking to and why.
