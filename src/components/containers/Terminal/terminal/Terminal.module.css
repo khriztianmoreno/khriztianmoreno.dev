@@ -1,0 +1,68 @@
+/* Terminal-scoped animations and responsive helpers.
+   Ported from khriztianmoreno.com app/globals.css and kept local so nothing
+   leaks into the rest of the site. */
+
+.fadeUp {
+  animation: terminal-fade-up 0.25s ease both;
+}
+
+.pop {
+  animation: terminal-pop 0.14s ease both;
+}
+
+.cursor {
+  animation: terminal-blink 1s steps(1) infinite;
+}
+
+/* Scales between 4px (~mobile) and 12.5px (desktop). 1.4vw keeps the 80-char
+   ASCII art inside the panel even on 320px viewports. */
+.bannerAscii {
+  font-size: clamp(4px, 1.4vw, 12.5px);
+}
+
+@media (max-width: 767px) {
+  .bannerAscii {
+    font-size: clamp(3.5px, 2.4vw, 6.5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fadeUp,
+  .pop,
+  .cursor {
+    animation: none;
+  }
+}
+
+@keyframes terminal-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes terminal-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes terminal-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
