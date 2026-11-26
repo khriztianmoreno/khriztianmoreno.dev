@@ -36,6 +36,18 @@ export type TimelineEntry = TalkEntry | WorkshopEntry | PostEntry;
 const TALKS: TalkEntry[] = [
   {
     type: 'talk',
+    title: 'Inteligencia Artificial On-Device con Gemini Nano y APIs Empotradas',
+    event: 'Tech Day Cali',
+    location: 'Colombia',
+    format: 'Presencial',
+    attendance: 600,
+    description:
+      'Demo práctico centrado en el desarrollo de funcionalidades inteligentes híbridas y puras, ejecutadas localmente en el cliente con Gemini Nano: traducción en tiempo real, síntesis estructurada mediante JSON Schema, generación de resúmenes y asistencia de escritura formal/casual, sin costos de procesamiento en la nube y garantizando la privacidad de los datos locales.',
+    sortKey: 202611,
+    displayDate: 'Nov 2026',
+  },
+  {
+    type: 'talk',
     title:
       'Desarrollo web potenciado por IA: Optimiza tu workflow con Antigravity y Chrome DevTools',
     event: 'GDG Quito / EPN',
@@ -280,6 +292,16 @@ const TALKS: TalkEntry[] = [
 ];
 
 const WORKSHOPS: WorkshopEntry[] = [
+  {
+    type: 'workshop',
+    title: 'Dale Manos a tu IA: Interfaces Web Accionables con WebMCP',
+    org: 'DevFest Bogotá (GDG) · Universidad de La Sabana, Chía',
+    description:
+      'Taller práctico para convertir interfaces web en herramientas que los agentes de IA pueden usar, exponiendo formularios declarativos y estado de la aplicación como tools mediante WebMCP.',
+    format: 'Presencial',
+    sortKey: 202611,
+    displayDate: 'Nov 2026',
+  },
   {
     type: 'workshop',
     title: 'Full Stack Web Developer Bootcamp',
