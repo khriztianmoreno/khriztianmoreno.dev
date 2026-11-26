@@ -5,6 +5,7 @@ import MilestonesSection from '../components/containers/Milestones';
 import AwardsSection from '../components/containers/Awards';
 import BlogSection from '../components/containers/Blog';
 import StackSection from '../components/containers/Stack';
+import TerminalSection from '../components/containers/Terminal';
 import ClosingCTA from '../components/containers/ClosingCTA';
 import Footer from '../components/containers/Footer';
 
@@ -18,6 +19,7 @@ export default function Portfolio() {
       <BlogSection />
       <StackSection />
       <MilestonesSection />
+      <TerminalSection />
       <ClosingCTA />
       <Footer />
     </div>
